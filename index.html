@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Learn Some Japanese</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+  <link href="index.css" rel="stylesheet" type="text/css" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+</head>
+
+<body>
+  <main role='main'>
+    <section class='search-area'>
+      <h1>ヾ(＠⌒ー⌒＠)ノ</h1>
+      <h1>Learn Some Japanese</h1>
+      <form action="#" class="js-search-form">
+        <input type="search" class="js-query" placeholder='Enter an English word'>
+        <button type="submit">Search</button>
+      </form>
+      <p>Try "end" or "test."</p>
+    </section>
+    <section class='word'>
+      <h2>Word</h2>
+      <div class="js-word" aria-live="assertive"></div>
+    </section>
+    <section class="kanji">
+      <h2>Kanji</h2>
+      <div class="js-kanji"></div>
+    </section>
+    <section class="kana">
+      <h2>Kana</h2>
+      <div class="js-kana"></div>
+    </section>
+  </main>
+  <script src="index.js"></script>
+</body>
+
+</html>
