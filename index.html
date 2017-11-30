@@ -13,7 +13,7 @@
 
 <body>
   <main role='main'>
-    <section class='search-area'>
+    <section class='search-area' role='region'>
       <h1>ヾ(＠⌒ー⌒＠)ノ</h1>
       <h1>Learn Some Japanese</h1>
       <form action="#" class="js-search-form">
@@ -22,18 +22,31 @@
       </form>
       <p>Try "end" or "test."</p>
     </section>
-    <section class='word'>
+    <section class="learn-more" role='region'>
+      <button class="accordion">Learn More About Japanese Writing Systems</button>
+      <div class="panel">
+        <h3>Japanese has THREE writing systems! (Well actually maybe four.)</h3>
+        <p>Japanese is written with kanji (the complex characters taken from Chinese) and two phonetic systems derived from
+          these more complicated characters.</p>
+      </div>
+    </section>
+    <section class='word' role='region'>
       <h2>Word</h2>
+      <p>kanji are shown in blue, hiragana in red, and katakana in green</p>
       <div class="js-word" aria-live="assertive"></div>
     </section>
-    <section class="kanji">
+    <section class="kanji" role='region'>
       <h2>Kanji</h2>
       <div class="js-kanji"></div>
     </section>
-    <section class="kana">
-      <h2>Kana</h2>
-      <div class="js-kana"></div>
+    <!-- <section class="hiragana" role='region'>
+      <h2>Hiragana</h2>
+      <div class="js-hiragana"></div>
     </section>
+    <section class="katakana" role='region'>
+      <h2>Katakana</h2>
+      <div class="js-katakana"></div>
+    </section> -->
   </main>
   <script src="index.js"></script>
 </body>

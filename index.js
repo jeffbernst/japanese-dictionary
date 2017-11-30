@@ -1,24 +1,46 @@
 // TO DO LIST
 // figure out init function
-// clear search box and enable setting up new search
+// account for words that don't have any kanji
+// sometimes kanji aren't displayed in order
+// i think i need to get the info from the api call and then push it into an array in the proper order,
+// then cycle through the array in order when i display
+// links to APIs in footer
 
 let japaneseWord = '';
 let englishWord = '';
 let charArray = [];
 
+const FADE_TIME = 600;
+
 // i can't get an init function to work for some reason!
 
 function watchSubmit() {
-  $('.word').hide();
-  $('.kanji').hide();
-  $('.kana').hide();
+  hideStuff();
   $('.js-search-form').submit(event => {
     event.preventDefault();
+    // clear old search data
+    hideStuff();
+    $('.js-word').html('');
+    $('.js-kanji').html('');
+    $('.js-hirakana').html('');
+    $('.js-katakana').html('');
+    // find seach term
     englishWord = $(this)
       .find('.js-query')
       .val();
     getWordFromApi(englishWord, displayWordSearchData);
+    $(this)
+      .find('.js-query')
+      .val('');
   });
+}
+
+function hideStuff() {
+  $('.learn-more').hide();
+  $('.word').hide();
+  $('.kanji').hide();
+  $('.hirakana').hide();
+  $('.katakana').hide();
 }
 
 function getWordFromApi(searchTerm, callback) {
@@ -39,13 +61,11 @@ function getWordFromApi(searchTerm, callback) {
 
 function displayWordSearchData(data) {
   japaneseWord = data.tuc[0].phrase.text;
-  // $('.js-word').html(`${japaneseWord} ${englishWord}`);
   highlightCharacters();
 }
 
 function highlightCharacters() {
   charArray = japaneseWord.split('');
-  // let charCodeArray = charArray.map(char => char.charCodeAt(0));
   let charLabelArray = charArray.map(char => {
     if (
       (char >= '\u4e00' && char <= '\u9faf') ||
@@ -65,19 +85,23 @@ function highlightCharacters() {
   });
   let wordWithMarkup = charArrayWithMarkup.join('');
   $('.js-word').html(wordWithMarkup + ' ' + englishWord);
-  $('.word').fadeIn(1000);
+  $('.learn-more').fadeIn(FADE_TIME);
+  $('.word').fadeIn(FADE_TIME);
   createKanjiArray(charArray, charLabelArray);
 }
 
 function createKanjiArray(charArray, charLabelArray) {
   let kanjiArray = [];
+  // let hiraganaArray = [];
+  // let katakanaArray = [];
   charArray.forEach((char, index) => {
     if (charLabelArray[index] === 'kanji') kanjiArray.push(char);
+    // else if (charLabelArray[index] === 'hiragana') hiraganaArray.push(char);
+    // else if (charLabelArray[index] === 'katakana') katakanaArray.push(char);
   });
   // run each kanji through API
   kanjiArray.forEach(char => getKanjiInfoFromApi(char, displayKanjiSearchData));
-  // want to make fade in wait until api calls are done
-  $('.kanji').fadeIn(1000);
+  $('.kanji').fadeIn(FADE_TIME);
 }
 
 function getKanjiInfoFromApi(searchTerm, callback) {
@@ -96,17 +120,38 @@ function displayKanjiSearchData(data) {
   let kanjiData = JSON.parse(data.responseText);
   let kanjiChar = kanjiData.kanji.character;
   let kanjiVid = kanjiData.kanji.video.mp4;
-  let $kanjiDiv = $(`<div>${
-    kanjiChar
-  }</div><video width="320" height="240" controls>
-  <source src="${
-    kanjiVid
-  }" type="video/mp4">Your browser does not support the video tag.</video>`);
+  let kanjiMeaning = kanjiData.kanji.meaning.english;
+  let $kanjiDiv = $(`
+  <div>${kanjiChar}</div>
+  <div>${kanjiMeaning}</div>
+  <video width="320" height="240" controls>
+  <source src="${kanjiVid}" type="video/mp4">
+  Your browser does not support the video tag.</video>`);
   // $('.js-kanji').append($kanjiDiv);
   $kanjiDiv
     .hide()
     .appendTo('.js-kanji')
-    .fadeIn(1000);
+    .fadeIn(FADE_TIME);
 }
 
+function displayHiraganaInfo(hiraganaArray) {}
+
 $(watchSubmit);
+
+// accordian code from:
+// https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_accordion_symbol
+
+var acc = document.getElementsByClassName('accordion');
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle('active');
+    var panel = this.nextElementSibling;
+    if (panel.style.maxHeight) {
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + 'px';
+    }
+  };
+}
