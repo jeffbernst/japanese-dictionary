@@ -1,6 +1,7 @@
 // TO DO LIST
+// add reading and audio for full japanese word
+// sections flash on page reload
 // figure out init function
-// account for words that don't have any kanji
 // sometimes kanji aren't displayed in order
 // i think i need to get the info from the api call and then push it into an array in the proper order,
 // then cycle through the array in order when i display

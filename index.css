@@ -15,6 +15,14 @@ body {
   color: green;
 }
 
+.learn-more,
+.word,
+.kanji,
+.hiragana,
+.katakana {
+  display: none;
+}
+
 /* accordian styling and code from: */
 /* https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_accordion_symbol */
 
