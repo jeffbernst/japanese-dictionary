@@ -100,8 +100,13 @@ function createKanjiArray(charArray, charLabelArray) {
     // else if (charLabelArray[index] === 'katakana') katakanaArray.push(char);
   });
   // run each kanji through API
-  kanjiArray.forEach(char => getKanjiInfoFromApi(char, displayKanjiSearchData));
-  $('.kanji').fadeIn(FADE_TIME);
+  if (kanjiArray.length !== 0) {
+    console.log(kanjiArray);
+    kanjiArray.forEach(char =>
+      getKanjiInfoFromApi(char, displayKanjiSearchData)
+    );
+    $('.kanji').fadeIn(FADE_TIME);
+  }
 }
 
 function getKanjiInfoFromApi(searchTerm, callback) {
