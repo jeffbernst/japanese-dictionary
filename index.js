@@ -16,7 +16,6 @@ const FADE_TIME = 600;
 // i can't get an init function to work for some reason!
 
 function watchSubmit() {
-  hideStuff();
   $('.js-search-form').submit(event => {
     event.preventDefault();
     // clear old search data
@@ -63,6 +62,7 @@ function getWordFromApi(searchTerm, callback) {
 function displayWordSearchData(data) {
   japaneseWord = data.tuc[0].phrase.text;
   highlightCharacters();
+  getWordReadingFromApi(japaneseWord, displayWordReadingData);
 }
 
 function highlightCharacters() {
@@ -138,6 +138,23 @@ function displayKanjiSearchData(data) {
     .hide()
     .appendTo('.js-kanji')
     .fadeIn(FADE_TIME);
+}
+
+function getWordReadingFromApi(searchTerm, callback) {
+  const query = {
+    url: 'https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
+    dataType: 'jsonp',
+    success: callback,
+    data: {
+      appid: 'dj00aiZpPXBFWnZSUGdRTFZJeSZzPWNvbnN1bWVyc2VjcmV0Jng9OWI-',
+      sentence: 'searchTerm'
+    }
+  };
+  $.ajax(query);
+}
+
+function displayWordReadingData(data) {
+  console.log(data);
 }
 
 function displayHiraganaInfo(hiraganaArray) {}
