@@ -1,0 +1,22 @@
+{
+  "name": "api-capstone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffbernst/api-capstone.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffbernst/api-capstone/issues"
+  },
+  "homepage": "https://github.com/jeffbernst/api-capstone#readme",
+  "dependencies": {
+    "xml-js": "^1.5.2"
+  }
+}

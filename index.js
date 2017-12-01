@@ -6,6 +6,9 @@
 // i think i need to get the info from the api call and then push it into an array in the proper order,
 // then cycle through the array in order when i display
 // links to APIs in footer
+// yahoo doesn't return an easy to read type of romanization
+
+let convert = require('xml-js');
 
 let japaneseWord = '';
 let englishWord = '';
@@ -142,12 +145,13 @@ function displayKanjiSearchData(data) {
 
 function getWordReadingFromApi(searchTerm, callback) {
   const query = {
-    url: 'https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
-    dataType: 'jsonp',
+    url:
+      'https://picnic-yelp-backend-ehoqpjnyse.now.sh/https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
+    dataType: 'text',
     success: callback,
     data: {
       appid: 'dj00aiZpPXBFWnZSUGdRTFZJeSZzPWNvbnN1bWVyc2VjcmV0Jng9OWI-',
-      sentence: 'searchTerm'
+      sentence: searchTerm
     }
   };
   $.ajax(query);
@@ -155,6 +159,8 @@ function getWordReadingFromApi(searchTerm, callback) {
 
 function displayWordReadingData(data) {
   console.log(data);
+  let result = convert.xml2js(data, { compact: true, ignoreDeclaration: true });
+  console.log(result);
 }
 
 function displayHiraganaInfo(hiraganaArray) {}
