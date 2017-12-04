@@ -1,6 +1,21 @@
 body {
-  padding: 40px 20px;
+  padding-top: 50px;
   font-family: 'Open Sans', sans-serif;
+}
+
+.title {
+  font-family: 'Permanent Marker', cursive;
+  /* background: -webkit-linear-gradient(#d742f4, #0f1a83);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent; */
+}
+
+.search-area,
+.word,
+.kanji {
+  text-align: center;
+  margin-bottom: 50px;
 }
 
 .kanji-color {
@@ -15,7 +30,10 @@ body {
   color: green;
 }
 
-.learn-more,
+.romaji-color {
+  color: purple;
+}
+
 .word,
 .kanji,
 .hiragana,
@@ -23,43 +41,8 @@ body {
   display: none;
 }
 
-/* accordian styling and code from: */
-/* https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_accordion_symbol */
-
-button.accordion {
-  background-color: #eee;
-  color: #444;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  border: none;
-  text-align: left;
-  outline: none;
-  font-size: 15px;
-  transition: 0.4s;
-}
-
-button.accordion.active,
-button.accordion:hover {
-  background-color: #ccc;
-}
-
-button.accordion:after {
-  content: '\002B';
-  color: #777;
-  font-weight: bold;
-  float: right;
-  margin-left: 5px;
-}
-
-button.accordion.active:after {
-  content: '\2212';
-}
-
-div.panel {
-  padding: 0 18px;
-  background-color: white;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.2s ease-out;
+.word-romaji,
+.word-kanji-kana,
+.word-english {
+  font-size: 40px;
 }

@@ -1,18 +1,30 @@
 // TO DO LIST
-// add reading and audio for full japanese word
 // sections flash on page reload
-// figure out init function
 // sometimes kanji aren't displayed in order
 // i think i need to get the info from the api call and then push it into an array in the proper order,
 // then cycle through the array in order when i display
-// links to APIs in footer
-// yahoo doesn't return an easy to read type of romanization
+// everything showing up at different times
+// clean up code!
+// add color for romaji
+// add behavior for when word isn't found
+// maybe move alphabet descriptions to being a subtitle of their respective section
+// so start with romaji section up top, and the english word above that just below search bar
+// or maybe up top show "englishWord / romaji / japaneseWord" with romaji and jp highlighted
+// can offer up different info depending on what's displayed, for example a word with kanji and hiragana
+// could bring up info about how kanji only replaces some of the hiragana
+
+// doesn't properly convert ha in konnichiwa
+// won't return anything for japanese
+
+// use promise to display things at right time:
+// https://css-tricks.com/multiple-simultaneous-ajax-requests-one-callback-jquery/
+// http://jsfiddle.net/EN8nc/164/
 
 let convert = require('xml-js');
+let hepburn = require('hepburn');
 
 let japaneseWord = '';
 let englishWord = '';
-let charArray = [];
 
 const FADE_TIME = 600;
 
@@ -21,13 +33,8 @@ const FADE_TIME = 600;
 function watchSubmit() {
   $('.js-search-form').submit(event => {
     event.preventDefault();
-    // clear old search data
     hideStuff();
-    $('.js-word').html('');
-    $('.js-kanji').html('');
-    $('.js-hirakana').html('');
-    $('.js-katakana').html('');
-    // find seach term
+    clearVariables();
     englishWord = $(this)
       .find('.js-query')
       .val();
@@ -39,11 +46,17 @@ function watchSubmit() {
 }
 
 function hideStuff() {
-  $('.learn-more').hide();
   $('.word').hide();
   $('.kanji').hide();
   $('.hirakana').hide();
   $('.katakana').hide();
+}
+
+function clearVariables() {
+  $('.js-word').html('');
+  $('.js-kanji').html('');
+  $('.js-hirakana').html('');
+  $('.js-katakana').html('');
 }
 
 function getWordFromApi(searchTerm, callback) {
@@ -64,12 +77,42 @@ function getWordFromApi(searchTerm, callback) {
 
 function displayWordSearchData(data) {
   japaneseWord = data.tuc[0].phrase.text;
-  highlightCharacters();
   getWordReadingFromApi(japaneseWord, displayWordReadingData);
+  highlightCharacters();
+}
+
+function getWordReadingFromApi(searchTerm, callback) {
+  const query = {
+    url:
+      'https://jeff-cors-anywhere-nzumhvclct.now.sh/https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
+    dataType: 'text',
+    success: callback,
+    data: {
+      appid: 'dj00aiZpPXBFWnZSUGdRTFZJeSZzPWNvbnN1bWVyc2VjcmV0Jng9OWI-',
+      sentence: searchTerm
+    }
+  };
+  $.ajax(query);
+}
+
+function displayWordReadingData(data) {
+  let result = convert.xml2js(data, { compact: true, ignoreDeclaration: true });
+  let wordRomajiArray = result.ResultSet.Result.WordList.Word;
+  let wordRomaji = '';
+  if (Array.isArray(wordRomajiArray)) {
+    wordRomaji = wordRomajiArray.reduce((accumulator, currentValue) => {
+      return accumulator.Roman._text + currentValue.Roman._text;
+    });
+  } else {
+    wordRomaji = wordRomajiArray.Roman._text;
+  }
+  let cleanedWordRomaji = hepburn.cleanRomaji(wordRomaji).toLowerCase();
+  $('.js-romaji').text(cleanedWordRomaji);
+  $('.word').fadeIn(FADE_TIME);
 }
 
 function highlightCharacters() {
-  charArray = japaneseWord.split('');
+  let charArray = japaneseWord.split('');
   let charLabelArray = charArray.map(char => {
     if (
       (char >= '\u4e00' && char <= '\u9faf') ||
@@ -84,34 +127,32 @@ function highlightCharacters() {
       return false;
     }
   });
-  let charArrayWithMarkup = charLabelArray.map((label, index) => {
-    return `<span class='${label}-color'>${charArray[index]}</span>`;
-  });
-  let wordWithMarkup = charArrayWithMarkup.join('');
-  $('.js-word').html(wordWithMarkup + ' ' + englishWord);
-  $('.learn-more').fadeIn(FADE_TIME);
-  $('.word').fadeIn(FADE_TIME);
-  createKanjiArray(charArray, charLabelArray);
+  let wordWithMarkup = charLabelArray
+    .map((label, index) => {
+      return `<span class='${label}-color'>${charArray[index]}</span>`;
+    })
+    .join('');
+  $('.js-word').html(wordWithMarkup);
+  $('.js-word-english').html(englishWord);
+  requestKanjiData(charArray, charLabelArray);
 }
 
-function createKanjiArray(charArray, charLabelArray) {
+function requestKanjiData(charArray, charLabelArray) {
   let kanjiArray = [];
-  // let hiraganaArray = [];
-  // let katakanaArray = [];
   charArray.forEach((char, index) => {
     if (charLabelArray[index] === 'kanji') kanjiArray.push(char);
-    // else if (charLabelArray[index] === 'hiragana') hiraganaArray.push(char);
-    // else if (charLabelArray[index] === 'katakana') katakanaArray.push(char);
   });
-  // run each kanji through API
   if (kanjiArray.length !== 0) {
-    console.log(kanjiArray);
     kanjiArray.forEach(char =>
       getKanjiInfoFromApi(char, displayKanjiSearchData)
     );
-    $('.kanji').fadeIn(FADE_TIME);
   }
 }
+
+// let hiraganaArray = [];
+// let katakanaArray = [];
+// else if (charLabelArray[index] === 'hiragana') hiraganaArray.push(char);
+// else if (charLabelArray[index] === 'katakana') katakanaArray.push(char);
 
 function getKanjiInfoFromApi(searchTerm, callback) {
   const query = {
@@ -129,58 +170,21 @@ function displayKanjiSearchData(data) {
   let kanjiData = JSON.parse(data.responseText);
   let kanjiChar = kanjiData.kanji.character;
   let kanjiVid = kanjiData.kanji.video.mp4;
+  let kanjiVidPoster = kanjiData.kanji.video.poster;
   let kanjiMeaning = kanjiData.kanji.meaning.english;
   let $kanjiDiv = $(`
-  <div>${kanjiChar}</div>
-  <div>${kanjiMeaning}</div>
-  <video width="320" height="240" controls>
-  <source src="${kanjiVid}" type="video/mp4">
-  Your browser does not support the video tag.</video>`);
-  // $('.js-kanji').append($kanjiDiv);
+    <div>${kanjiChar}</div>
+    <div>${kanjiMeaning}</div>
+    <video width="320" height="240" controls poster="${kanjiVidPoster}">
+    <source src="${kanjiVid}" type="video/mp4">
+    Your browser does not support the video tag.</video>`);
+  $('.kanji').fadeIn(FADE_TIME);
   $kanjiDiv
     .hide()
     .appendTo('.js-kanji')
     .fadeIn(FADE_TIME);
 }
 
-function getWordReadingFromApi(searchTerm, callback) {
-  const query = {
-    url:
-      'https://picnic-yelp-backend-ehoqpjnyse.now.sh/https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
-    dataType: 'text',
-    success: callback,
-    data: {
-      appid: 'dj00aiZpPXBFWnZSUGdRTFZJeSZzPWNvbnN1bWVyc2VjcmV0Jng9OWI-',
-      sentence: searchTerm
-    }
-  };
-  $.ajax(query);
-}
-
-function displayWordReadingData(data) {
-  console.log(data);
-  let result = convert.xml2js(data, { compact: true, ignoreDeclaration: true });
-  console.log(result);
-}
-
 function displayHiraganaInfo(hiraganaArray) {}
 
 $(watchSubmit);
-
-// accordian code from:
-// https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_accordion_symbol
-
-var acc = document.getElementsByClassName('accordion');
-var i;
-
-for (i = 0; i < acc.length; i++) {
-  acc[i].onclick = function() {
-    this.classList.toggle('active');
-    var panel = this.nextElementSibling;
-    if (panel.style.maxHeight) {
-      panel.style.maxHeight = null;
-    } else {
-      panel.style.maxHeight = panel.scrollHeight + 'px';
-    }
-  };
-}

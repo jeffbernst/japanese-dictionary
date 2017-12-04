@@ -1,19 +1,31 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // TO DO LIST
-// add reading and audio for full japanese word
 // sections flash on page reload
-// figure out init function
 // sometimes kanji aren't displayed in order
 // i think i need to get the info from the api call and then push it into an array in the proper order,
 // then cycle through the array in order when i display
-// links to APIs in footer
-// yahoo doesn't return an easy to read type of romanization
+// everything showing up at different times
+// clean up code!
+// add color for romaji
+// add behavior for when word isn't found
+// maybe move alphabet descriptions to being a subtitle of their respective section
+// so start with romaji section up top, and the english word above that just below search bar
+// or maybe up top show "englishWord / romaji / japaneseWord" with romaji and jp highlighted
+// can offer up different info depending on what's displayed, for example a word with kanji and hiragana
+// could bring up info about how kanji only replaces some of the hiragana
+
+// doesn't properly convert ha in konnichiwa
+// won't return anything for japanese
+
+// use promise to display things at right time:
+// https://css-tricks.com/multiple-simultaneous-ajax-requests-one-callback-jquery/
+// http://jsfiddle.net/EN8nc/164/
 
 let convert = require('xml-js');
+let hepburn = require('hepburn');
 
 let japaneseWord = '';
 let englishWord = '';
-let charArray = [];
 
 const FADE_TIME = 600;
 
@@ -22,13 +34,8 @@ const FADE_TIME = 600;
 function watchSubmit() {
   $('.js-search-form').submit(event => {
     event.preventDefault();
-    // clear old search data
     hideStuff();
-    $('.js-word').html('');
-    $('.js-kanji').html('');
-    $('.js-hirakana').html('');
-    $('.js-katakana').html('');
-    // find seach term
+    clearVariables();
     englishWord = $(this)
       .find('.js-query')
       .val();
@@ -40,11 +47,17 @@ function watchSubmit() {
 }
 
 function hideStuff() {
-  $('.learn-more').hide();
   $('.word').hide();
   $('.kanji').hide();
   $('.hirakana').hide();
   $('.katakana').hide();
+}
+
+function clearVariables() {
+  $('.js-word').html('');
+  $('.js-kanji').html('');
+  $('.js-hirakana').html('');
+  $('.js-katakana').html('');
 }
 
 function getWordFromApi(searchTerm, callback) {
@@ -65,12 +78,42 @@ function getWordFromApi(searchTerm, callback) {
 
 function displayWordSearchData(data) {
   japaneseWord = data.tuc[0].phrase.text;
-  highlightCharacters();
   getWordReadingFromApi(japaneseWord, displayWordReadingData);
+  highlightCharacters();
+}
+
+function getWordReadingFromApi(searchTerm, callback) {
+  const query = {
+    url:
+      'https://jeff-cors-anywhere-nzumhvclct.now.sh/https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
+    dataType: 'text',
+    success: callback,
+    data: {
+      appid: 'dj00aiZpPXBFWnZSUGdRTFZJeSZzPWNvbnN1bWVyc2VjcmV0Jng9OWI-',
+      sentence: searchTerm
+    }
+  };
+  $.ajax(query);
+}
+
+function displayWordReadingData(data) {
+  let result = convert.xml2js(data, { compact: true, ignoreDeclaration: true });
+  let wordRomajiArray = result.ResultSet.Result.WordList.Word;
+  let wordRomaji = '';
+  if (Array.isArray(wordRomajiArray)) {
+    wordRomaji = wordRomajiArray.reduce((accumulator, currentValue) => {
+      return accumulator.Roman._text + currentValue.Roman._text;
+    });
+  } else {
+    wordRomaji = wordRomajiArray.Roman._text;
+  }
+  let cleanedWordRomaji = hepburn.cleanRomaji(wordRomaji).toLowerCase();
+  $('.js-romaji').text(cleanedWordRomaji);
+  $('.word').fadeIn(FADE_TIME);
 }
 
 function highlightCharacters() {
-  charArray = japaneseWord.split('');
+  let charArray = japaneseWord.split('');
   let charLabelArray = charArray.map(char => {
     if (
       (char >= '\u4e00' && char <= '\u9faf') ||
@@ -85,34 +128,32 @@ function highlightCharacters() {
       return false;
     }
   });
-  let charArrayWithMarkup = charLabelArray.map((label, index) => {
-    return `<span class='${label}-color'>${charArray[index]}</span>`;
-  });
-  let wordWithMarkup = charArrayWithMarkup.join('');
-  $('.js-word').html(wordWithMarkup + ' ' + englishWord);
-  $('.learn-more').fadeIn(FADE_TIME);
-  $('.word').fadeIn(FADE_TIME);
-  createKanjiArray(charArray, charLabelArray);
+  let wordWithMarkup = charLabelArray
+    .map((label, index) => {
+      return `<span class='${label}-color'>${charArray[index]}</span>`;
+    })
+    .join('');
+  $('.js-word').html(wordWithMarkup);
+  $('.js-word-english').html(englishWord);
+  requestKanjiData(charArray, charLabelArray);
 }
 
-function createKanjiArray(charArray, charLabelArray) {
+function requestKanjiData(charArray, charLabelArray) {
   let kanjiArray = [];
-  // let hiraganaArray = [];
-  // let katakanaArray = [];
   charArray.forEach((char, index) => {
     if (charLabelArray[index] === 'kanji') kanjiArray.push(char);
-    // else if (charLabelArray[index] === 'hiragana') hiraganaArray.push(char);
-    // else if (charLabelArray[index] === 'katakana') katakanaArray.push(char);
   });
-  // run each kanji through API
   if (kanjiArray.length !== 0) {
-    console.log(kanjiArray);
     kanjiArray.forEach(char =>
       getKanjiInfoFromApi(char, displayKanjiSearchData)
     );
-    $('.kanji').fadeIn(FADE_TIME);
   }
 }
+
+// let hiraganaArray = [];
+// let katakanaArray = [];
+// else if (charLabelArray[index] === 'hiragana') hiraganaArray.push(char);
+// else if (charLabelArray[index] === 'katakana') katakanaArray.push(char);
 
 function getKanjiInfoFromApi(searchTerm, callback) {
   const query = {
@@ -130,63 +171,318 @@ function displayKanjiSearchData(data) {
   let kanjiData = JSON.parse(data.responseText);
   let kanjiChar = kanjiData.kanji.character;
   let kanjiVid = kanjiData.kanji.video.mp4;
+  let kanjiVidPoster = kanjiData.kanji.video.poster;
   let kanjiMeaning = kanjiData.kanji.meaning.english;
   let $kanjiDiv = $(`
-  <div>${kanjiChar}</div>
-  <div>${kanjiMeaning}</div>
-  <video width="320" height="240" controls>
-  <source src="${kanjiVid}" type="video/mp4">
-  Your browser does not support the video tag.</video>`);
-  // $('.js-kanji').append($kanjiDiv);
+    <div>${kanjiChar}</div>
+    <div>${kanjiMeaning}</div>
+    <video width="320" height="240" controls poster="${kanjiVidPoster}">
+    <source src="${kanjiVid}" type="video/mp4">
+    Your browser does not support the video tag.</video>`);
+  $('.kanji').fadeIn(FADE_TIME);
   $kanjiDiv
     .hide()
     .appendTo('.js-kanji')
     .fadeIn(FADE_TIME);
 }
 
-function getWordReadingFromApi(searchTerm, callback) {
-  const query = {
-    url:
-      'https://picnic-yelp-backend-ehoqpjnyse.now.sh/https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
-    dataType: 'text',
-    success: callback,
-    data: {
-      appid: 'dj00aiZpPXBFWnZSUGdRTFZJeSZzPWNvbnN1bWVyc2VjcmV0Jng9OWI-',
-      sentence: searchTerm
-    }
-  };
-  $.ajax(query);
-}
-
-function displayWordReadingData(data) {
-  console.log(data);
-  let result = convert.xml2js(data, { compact: true, ignoreDeclaration: true });
-  console.log(result);
-}
-
 function displayHiraganaInfo(hiraganaArray) {}
 
 $(watchSubmit);
 
-// accordian code from:
-// https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_accordion_symbol
-
-var acc = document.getElementsByClassName('accordion');
-var i;
-
-for (i = 0; i < acc.length; i++) {
-  acc[i].onclick = function() {
-    this.classList.toggle('active');
-    var panel = this.nextElementSibling;
-    if (panel.style.maxHeight) {
-      panel.style.maxHeight = null;
-    } else {
-      panel.style.maxHeight = panel.scrollHeight + 'px';
+},{"hepburn":3,"xml-js":6}],2:[function(require,module,exports){
+module.exports = function(str, regex, map) {
+    if (arguments.length === 2) {
+        map = regex;
+        regex = new RegExp(Object.keys(map).join("|"), "ig");
     }
-  };
-}
 
-},{"xml-js":4}],2:[function(require,module,exports){
+    return str.replace(regex, function(all) {
+        if (all in map) {
+            return map[all];
+        }
+
+        return all;
+    });
+};
+
+},{}],3:[function(require,module,exports){
+/*jslint node: true */
+'use strict';
+
+var bulkReplace = require("bulk-replace");
+
+var hiraganaMonographs = {
+  "あ": "A", "い": "I", "う": "U", "え": "E", "お": "O",
+  "か": "KA", "き": "KI", "く": "KU", "け": "KE", "こ": "KO",
+  "さ": "SA", "し": "SHI", "す": "SU", "せ": "SE", "そ": "SO",
+  "た": "TA", "ち": "CHI", "つ": "TSU", "て": "TE", "と": "TO",
+  "な": "NA", "に": "NI", "ぬ": "NU", "ね": "NE", "の": "NO",
+  "は": "HA", "ひ": "HI", "ふ": "FU", "へ": "HE", "ほ": "HO",
+  "ま": "MA", "み": "MI", "む": "MU", "め": "ME", "も": "MO",
+  "や": "YA", "ゆ": "YU", "よ": "YO",
+  "ら": "RA", "り": "RI", "る": "RU", "れ": "RE", "ろ": "RO",
+  "わ": "WA", "ゐ": "WI", "ゑ": "WE", "を": "WO", "ん": "N'",
+  "が": "GA", "ぎ": "GI", "ぐ": "GU", "げ": "GE", "ご": "GO",
+  "ざ": "ZA", "じ": "JI", "ず": "ZU", "ぜ": "ZE", "ぞ": "ZO",
+  "だ": "DA", "ぢ": "DJI", "づ": "DZU", "で": "DE", "ど": "DO",
+  "ば": "BA", "び": "BI", "ぶ": "BU", "べ": "BE", "ぼ": "BO",
+  "ぱ": "PA", "ぴ": "PI", "ぷ": "PU", "ぺ": "PE", "ぽ": "PO"
+};
+
+var hiraganaDigraphs = {
+  "きゃ": "KYA", "きゅ": "KYU", "きょ": "KYO",
+  "しゃ": "SHA", "しゅ": "SHU", "しょ": "SHO",
+  "ちゃ": "CHA", "ちゅ": "CHU", "ちょ": "CHO",
+  "にゃ": "NYA", "にゅ": "NYU", "にょ": "NYO",
+  "ひゃ": "HYA", "ひゅ": "HYU", "ひょ": "HYO",
+  "みゃ": "MYA", "みゅ": "MYU", "みょ": "MYO",
+  "りゃ": "RYA", "りゅ": "RYU", "りょ": "RYO",
+  "ぎゃ": "GYA", "ぎゅ": "GYU", "ぎょ": "GYO",
+  "じゃ": "JA", "じゅ": "JU", "じょ": "JO",
+  "びゃ": "BYA", "びゅ": "BYU", "びょ": "BYO",
+  "ぴゃ": "PYA", "ぴゅ": "PYU", "ぴょ": "PYO"
+};
+
+var katakanaMonographs = {
+  "ア": "A", "イ": "I", "ウ": "U", "エ": "E", "オ": "O",
+  "カ": "KA", "キ": "KI", "ク": "KU", "ケ": "KE", "コ": "KO",
+  "サ": "SA", "シ": "SHI", "ス": "SU", "セ": "SE", "ソ": "SO",
+  "タ": "TA", "チ": "CHI", "ツ": "TSU", "テ": "TE", "ト": "TO",
+  "ナ": "NA", "ニ": "NI", "ヌ": "NU", "ネ": "NE", "ノ": "NO",
+  "ハ": "HA", "ヒ": "HI", "フ": "FU", "ヘ": "HE", "ホ": "HO",
+  "マ": "MA", "ミ": "MI", "ム": "MU", "メ": "ME", "モ": "MO",
+  "ヤ": "YA", "ユ": "YU", "ヨ": "YO",
+  "ラ": "RA", "リ": "RI", "ル": "RU", "レ": "RE", "ロ": "RO",
+  "ワ": "WA", "ヰ": "WI", "ヱ": "WE",  "ヲ": "WO", "ン": "N",
+  "ガ": "GA", "ギ": "GI", "グ": "GU", "ゲ": "GE", "ゴ": "GO",
+  "ザ": "ZA", "ジ": "JI", "ズ": "ZU", "ゼ": "ZE", "ゾ": "ZO",
+  "ダ": "DA", "ヂ": "DJI", "ヅ": "DZU", "デ": "DE", "ド": "DO",
+  "バ": "BA", "ビ": "BI", "ブ": "BU", "ベ": "BE", "ボ": "BO",
+  "パ": "PA", "ピ": "PI", "プ": "PU", "ペ": "PE", "ポ": "PO"
+};
+
+var katakanaDigraphs = {
+  "アー": "Ā", "イー": "Ī", "ウー": "Ū", "エー": "Ē", "オー": "Ō",
+  "カー": "KĀ", "キー": "KĪ", "クー": "KŪ", "ケー": "KĒ", "コー": "KŌ",
+  "サー": "SĀ", "シー": "SHĪ", "スー": "SŪ", "セー": "SĒ", "ソー": "SŌ",
+  "ター": "TĀ", "チー": "CHĪ", "ツー": "TSŪ", "テー": "TĒ", "トー": "TŌ",
+  "ナー": "NĀ", "ニー": "NĪ", "ヌー": "NŪ", "ネー": "NĒ", "ノー": "NŌ",
+  "ハー": "HĀ", "ヒー": "HĪ", "フー": "FŪ", "ヘー": "HĒ", "ホー": "HŌ",
+  "マー": "MĀ", "ミー": "MĪ", "ムー": "MŪ", "メー": "MĒ", "モー": "MŌ",
+  "ヤー": "YĀ", "ユー": "YŪ", "ヨー": "YŌ",
+  "ラー": "RĀ", "リー": "RĪ", "ルー": "RŪ", "レー": "RĒ", "ロー": "RŌ",
+  "ワー": "WĀ", "ヰー": "WĪ", "ヱー": "WĒ",  "ヲー": "WŌ", "ンー": "N",
+  "ガー": "GĀ", "ギー": "GĪ", "グー": "GŪ", "ゲー": "GĒ", "ゴー": "GŌ",
+  "ザー": "ZĀ", "ジー": "JĪ", "ズー": "ZŪ", "ゼー": "ZĒ", "ゾー": "ZŌ",
+  "ダー": "DĀ", "ヂー": "DJĪ", "ヅー": "DZŪ", "デー": "DĒ", "ドー": "DŌ",
+  "バー": "BĀ", "ビー": "BĪ", "ブー": "BŪ", "ベー": "BĒ", "ボー": "BŌ",
+  "パー": "PĀ", "ピー": "PĪ", "プー": "PŪ", "ペー": "PĒ", "ポー": "PŌ",
+  "キャ": "KYA", "キュ": "KYU", "キョ": "KYO",
+  "シャ": "SHA", "シュ": "SHU", "ショ": "SHO",
+  "チャ": "CHA", "チュ": "CHU", "チョ": "CHO",
+  "ニャ": "NYA", "ニュ": "NYU", "ニョ": "NYO",
+  "ヒャ": "HYA", "ヒュ": "HYU", "ヒョ": "HYO",
+  "ミャ": "MYA", "ミュ": "MYU", "ミョ": "MYO",
+  "リャ": "RYA", "リュ": "RYU", "リョ": "RYO",
+  "ギャ": "GYA", "ギュ": "GYU", "ギョ": "GYO",
+  "ジャ": "JA", "ジュ": "JU", "ジョ": "JO",
+  "ビャ": "BYA", "ビュ": "BYU", "ビョ": "BYO",
+  "ピャ": "PYA", "ピュ": "PYU", "ピョ": "PYO"
+};
+
+var katakanaTrigraphs = {
+  "キャー": "KYĀ", "キュー": "KYŪ", "キョー": "KYŌ",
+  "シャー": "SHĀ", "シュー": "SHŪ", "ショー": "SHŌ",
+  "チャー": "CHĀ", "チュー": "CHŪ", "チョー": "CHŌ",
+  "ニャー": "NYĀ", "ニュー": "NYŪ", "ニョー": "NYŌ",
+  "ヒャー": "HYĀ", "ヒュー": "HYŪ", "ヒョー": "HYŌ",
+  "ミャー": "MYĀ", "ミュー": "MYŪ", "ミョー": "MYŌ",
+  "リャー": "RYĀ", "リュー": "RYŪ", "リョー": "RYŌ",
+  "ギャー": "GYĀ", "ギュー": "GYŪ", "ギョー": "GYŌ",
+  "ジャー": "JĀ", "ジュー": "JŪ", "ジョー": "JŌ",
+  "ビャー": "BYĀ", "ビュー": "BYŪ", "ビョー": "BYŌ",
+  "ピャー": "PYĀ", "ピュー": "PYŪ", "ピョー": "PYŌ"
+};
+
+// Used to convert old Nihon-Shiki style romaji into the modern Hepburn form.
+// Source: http://nayuki.eigenstate.org/page/variations-on-japanese-romanization
+var nihonShiki = {
+    "SI": "SHI",
+    "ZI": "JI",
+    "TI": "CHI",
+    "DI": "JI",
+    "TU": "TSU",
+    "DU": "ZU",
+    "SHU": "SHU", // Prevent HU from accidentally converting
+    "CHU": "CHU",
+    "HU": "FU",
+    "CYA": "CHA",
+    "CYO": "CHO",
+    "CYU": "CHU",
+    "SYA": "SHA",
+    "SYU": "SHU",
+    "SYO": "SHO",
+    "ZYA": "JA",
+    "ZYU": "JU",
+    "ZYO": "JO",
+    "TYA": "CHA",
+    "TYU": "CHU",
+    "TYO": "CHO",
+    "DYA": "JA",
+    "DYU": "JU",
+    "DYO": "JO"
+};
+
+// For use with toHiragana
+var hiraganaMap = {};
+
+Object.keys(hiraganaMonographs).forEach(function(key) {
+  var value = hiraganaMonographs[key];
+  if (!(value in hiraganaMap)) {
+    hiraganaMap[value] = key;
+  }
+});
+
+Object.keys(hiraganaDigraphs).forEach(function(key) {
+  var value = hiraganaDigraphs[key];
+  if (!(value in hiraganaMap)) {
+    hiraganaMap[value] = key;
+  }
+});
+
+var hiraganaRegex = new RegExp(Object.keys(hiraganaMap).sort(function(a, b) {
+  return b.length - a.length;
+}).join("|"), "g");
+
+// For use with toKatakana
+var katakanaMap = {};
+
+Object.keys(katakanaMonographs).forEach(function(key) {
+  var value = katakanaMonographs[key];
+  if (!(value in katakanaMap)) {
+    katakanaMap[value] = key;
+  }
+});
+
+Object.keys(katakanaDigraphs).forEach(function(key) {
+  var value = katakanaDigraphs[key];
+  if (!(value in katakanaMap)) {
+    katakanaMap[value] = key;
+  }
+});
+
+Object.keys(katakanaTrigraphs).forEach(function(key) {
+  var value = katakanaTrigraphs[key];
+  if (!(value in katakanaMap)) {
+    katakanaMap[value] = key;
+  }
+});
+
+var katakanaRegex = new RegExp(Object.keys(katakanaMap).sort(function(a, b) {
+  return b.length - a.length;
+}).join("|"), "g");
+
+// API
+
+exports.fromKana = function(str) {
+  // Initial transliteration
+  str = bulkReplace(str, hiraganaDigraphs);
+  str = bulkReplace(str, katakanaDigraphs);
+  str = bulkReplace(str, hiraganaMonographs);
+  str = bulkReplace(str, katakanaMonographs);
+
+  // Correct use of sokuon
+  str = str.replace(/っC/g, "TC").replace(/っ(.)/g, "$1$1");
+  str = str.replace(/ッC/g, "TC").replace(/ッ(.)/g, "$1$1");
+
+  // Correct usage of N' (M' is a common mistake)
+  str = str.replace(/[NM]'([^YAEIOU]|$)/g, "N$1");
+
+  // Correct use of choonpu
+  str = str.replace(/Aー/g, "Ā");
+  str = str.replace(/Iー/g, "Ī");
+  str = str.replace(/Uー/g, "Ū");
+  str = str.replace(/Eー/g, "Ē");
+  str = str.replace(/Oー/g, "Ō");
+
+  return str;
+};
+
+exports.toHiragana = function(str) {
+  // All conversion is done in upper-case
+  str = str.toUpperCase();
+
+  // Correct use of sokuon
+  str = str.replace(/TC/g, "っC");
+  str = str.replace(/([^AEIOUN])\1/g, "っ$1");
+
+  // Transliteration
+  str = bulkReplace(str, hiraganaRegex, hiraganaMap);
+
+  // Fix any remaining N/M usage (that isn't a N' usage)
+  str = str.replace(/N|M/g, "ん");
+
+  return str;
+};
+
+exports.toKatakana = function(str) {
+  // All conversion is done in upper-case
+  str = str.toUpperCase();
+
+  // Correct use of sokuon
+  str = str.replace(/TC/g, "ッC");
+  str = str.replace(/([^AEIOUN])\1/g, "ッ$1");
+
+  // Transliteration
+  str = bulkReplace(str, katakanaRegex, katakanaMap);
+
+  // Fix any remaining N/M usage (that isn't a N' usage)
+  str = str.replace(/N|M/g, "ン");
+
+  return str;
+};
+
+exports.cleanRomaji = function(str) {
+  // Follows many of the suggestions from:
+  // http://nayuki.eigenstate.org/page/variations-on-japanese-romanization
+
+  // All conversion is done in upper-case
+  str = str.toUpperCase();
+
+  // Should be using N instead of M
+  str = str.replace(/(\w)M([^AEIOUY]|$)/g, "$1N$2");
+
+  // Convert the NN form into the more common N'
+  str = str.replace(/NN/g, "N'");
+
+  // Convert usage of OU into the more common OO
+  // Handle cases like Toukyou
+  str = str.replace(/OU/g, "OO");
+
+  // Fix antiquated usage of OH to mean OO
+  // (handle ambiguous cases like 'Kohusai' vs. 'Tohkyoh')
+  str = str.replace(/OH([^AIEO]|$)/g, "OO$1");
+
+  // Replace old Nihon-shiki usage with modern Hepburn form
+  str = bulkReplace(str, nihonShiki);
+
+  return str;
+};
+
+exports.containsHiragana = function(str) {
+  return new RegExp(Object.keys(hiraganaMonographs).join('|')).test(str);
+};
+
+exports.containsKatakana = function(str) {
+  return new RegExp(Object.keys(katakanaMonographs).join('|')).test(str);
+};
+
+exports.containsKana = function(str){
+  return (exports.containsHiragana(str) || exports.containsKatakana(str));
+};
+
+},{"bulk-replace":2}],4:[function(require,module,exports){
 (function (Buffer){
 ;(function (sax) { // wrapper for non-node envs
   sax.parser = function (strict, opt) { return new SAXParser(strict, opt) }
@@ -1755,7 +2051,7 @@ for (i = 0; i < acc.length; i++) {
 })(typeof exports === 'undefined' ? this.sax = {} : exports)
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":11,"stream":34,"string_decoder":35}],3:[function(require,module,exports){
+},{"buffer":13,"stream":36,"string_decoder":37}],5:[function(require,module,exports){
 (function (process){
 /*jslint node:true */
 
@@ -1836,7 +2132,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"_process":19}],4:[function(require,module,exports){
+},{"_process":21}],6:[function(require,module,exports){
 /*jslint node:true */
 
 var xml2js = require('./xml2js');
@@ -1850,7 +2146,7 @@ module.exports = {
     js2xml: js2xml,
     json2xml: json2xml
 };
-},{"./js2xml":5,"./json2xml":6,"./xml2js":7,"./xml2json":8}],5:[function(require,module,exports){
+},{"./js2xml":7,"./json2xml":8,"./xml2js":9,"./xml2json":10}],7:[function(require,module,exports){
 var common = require('./common');
 
 function validateOptions(userOptions) {
@@ -2118,7 +2414,7 @@ module.exports = function (js, options) {
     return xml;
 };
 
-},{"./common":3}],6:[function(require,module,exports){
+},{"./common":5}],8:[function(require,module,exports){
 (function (Buffer){
 var js2xml = require('./js2xml.js');
 
@@ -2140,7 +2436,7 @@ module.exports = function (json, options) {
     return js2xml(js, options);
 };
 }).call(this,require("buffer").Buffer)
-},{"./js2xml.js":5,"buffer":11}],7:[function(require,module,exports){
+},{"./js2xml.js":7,"buffer":13}],9:[function(require,module,exports){
 var sax = require('sax');
 var expat /*= require('node-expat');*/ = { on: function () { }, parse: function () { } };
 var common = require('./common');
@@ -2438,7 +2734,7 @@ module.exports = function (xml, userOptions) {
 
 };
 
-},{"./common":3,"sax":2}],8:[function(require,module,exports){
+},{"./common":5,"sax":4}],10:[function(require,module,exports){
 var common = require('./common');
 var xml2js = require('./xml2js');
 
@@ -2463,7 +2759,7 @@ module.exports = function(xml, userOptions) {
     return json.replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029');
 };
 
-},{"./common":3,"./xml2js":7}],9:[function(require,module,exports){
+},{"./common":5,"./xml2js":9}],11:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -2579,9 +2875,9 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -4297,7 +4593,7 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":9,"ieee754":14}],12:[function(require,module,exports){
+},{"base64-js":11,"ieee754":16}],14:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4408,7 +4704,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":16}],13:[function(require,module,exports){
+},{"../../is-buffer/index.js":18}],15:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -4712,7 +5008,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -4798,7 +5094,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -4823,7 +5119,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -4846,14 +5142,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -4900,7 +5196,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 }
 
 }).call(this,require('_process'))
-},{"_process":19}],19:[function(require,module,exports){
+},{"_process":21}],21:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -5086,10 +5382,10 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = require('./lib/_stream_duplex.js');
 
-},{"./lib/_stream_duplex.js":21}],21:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":23}],23:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5214,7 +5510,7 @@ function forEach(xs, f) {
     f(xs[i], i);
   }
 }
-},{"./_stream_readable":23,"./_stream_writable":25,"core-util-is":12,"inherits":15,"process-nextick-args":18}],22:[function(require,module,exports){
+},{"./_stream_readable":25,"./_stream_writable":27,"core-util-is":14,"inherits":17,"process-nextick-args":20}],24:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -5262,7 +5558,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":24,"core-util-is":12,"inherits":15}],23:[function(require,module,exports){
+},{"./_stream_transform":26,"core-util-is":14,"inherits":17}],25:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -6272,7 +6568,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":21,"./internal/streams/BufferList":26,"./internal/streams/destroy":27,"./internal/streams/stream":28,"_process":19,"core-util-is":12,"events":13,"inherits":15,"isarray":17,"process-nextick-args":18,"safe-buffer":33,"string_decoder/":35,"util":10}],24:[function(require,module,exports){
+},{"./_stream_duplex":23,"./internal/streams/BufferList":28,"./internal/streams/destroy":29,"./internal/streams/stream":30,"_process":21,"core-util-is":14,"events":15,"inherits":17,"isarray":19,"process-nextick-args":20,"safe-buffer":35,"string_decoder/":37,"util":12}],26:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -6487,7 +6783,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":21,"core-util-is":12,"inherits":15}],25:[function(require,module,exports){
+},{"./_stream_duplex":23,"core-util-is":14,"inherits":17}],27:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -7154,7 +7450,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":21,"./internal/streams/destroy":27,"./internal/streams/stream":28,"_process":19,"core-util-is":12,"inherits":15,"process-nextick-args":18,"safe-buffer":33,"util-deprecate":36}],26:[function(require,module,exports){
+},{"./_stream_duplex":23,"./internal/streams/destroy":29,"./internal/streams/stream":30,"_process":21,"core-util-is":14,"inherits":17,"process-nextick-args":20,"safe-buffer":35,"util-deprecate":38}],28:[function(require,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -7229,7 +7525,7 @@ module.exports = function () {
 
   return BufferList;
 }();
-},{"safe-buffer":33}],27:[function(require,module,exports){
+},{"safe-buffer":35}],29:[function(require,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -7302,13 +7598,13 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-},{"process-nextick-args":18}],28:[function(require,module,exports){
+},{"process-nextick-args":20}],30:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":13}],29:[function(require,module,exports){
+},{"events":15}],31:[function(require,module,exports){
 module.exports = require('./readable').PassThrough
 
-},{"./readable":30}],30:[function(require,module,exports){
+},{"./readable":32}],32:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -7317,13 +7613,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":21,"./lib/_stream_passthrough.js":22,"./lib/_stream_readable.js":23,"./lib/_stream_transform.js":24,"./lib/_stream_writable.js":25}],31:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":23,"./lib/_stream_passthrough.js":24,"./lib/_stream_readable.js":25,"./lib/_stream_transform.js":26,"./lib/_stream_writable.js":27}],33:[function(require,module,exports){
 module.exports = require('./readable').Transform
 
-},{"./readable":30}],32:[function(require,module,exports){
+},{"./readable":32}],34:[function(require,module,exports){
 module.exports = require('./lib/_stream_writable.js');
 
-},{"./lib/_stream_writable.js":25}],33:[function(require,module,exports){
+},{"./lib/_stream_writable.js":27}],35:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -7387,7 +7683,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":11}],34:[function(require,module,exports){
+},{"buffer":13}],36:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -7516,7 +7812,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":13,"inherits":15,"readable-stream/duplex.js":20,"readable-stream/passthrough.js":29,"readable-stream/readable.js":30,"readable-stream/transform.js":31,"readable-stream/writable.js":32}],35:[function(require,module,exports){
+},{"events":15,"inherits":17,"readable-stream/duplex.js":22,"readable-stream/passthrough.js":31,"readable-stream/readable.js":32,"readable-stream/transform.js":33,"readable-stream/writable.js":34}],37:[function(require,module,exports){
 'use strict';
 
 var Buffer = require('safe-buffer').Buffer;
@@ -7789,7 +8085,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":33}],36:[function(require,module,exports){
+},{"safe-buffer":35}],38:[function(require,module,exports){
 (function (global){
 
 /**

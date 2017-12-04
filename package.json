@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/jeffbernst/api-capstone#readme",
   "dependencies": {
+    "hepburn": "^1.0.0",
     "xml-js": "^1.5.2"
   }
 }

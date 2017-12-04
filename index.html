@@ -5,44 +5,46 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Learn Some Japanese</title>
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
+    crossorigin="anonymous">
   <link href="index.css" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet">
 </head>
 
 <body>
-  <main role='main'>
-    <section class='search-area' role='region'>
-      <h1>ヾ(＠⌒ー⌒＠)ノ</h1>
-      <h1>Learn Some Japanese</h1>
-      <form action="#" class="js-search-form">
-        <input type="search" class="js-query" placeholder='Enter an English word'>
-        <button type="submit">Search</button>
-      </form>
-      <p>Try "end" or "test."</p>
-    </section>
-    <section class="learn-more" role='region'>
-      <button class="accordion">Learn More About Japanese Writing Systems</button>
-      <div class="panel">
-        <h3>Japanese has THREE writing systems! (Well actually maybe four.)</h3>
-        <p>Japanese is written with kanji (the complex characters taken from Chinese) and two phonetic systems derived from
-          these more complicated characters.</p>
-      </div>
-    </section>
-    <section class='word' role='region'>
-      <h2>Word</h2>
-      <p>Kanji are complex characters originally from Chinese. They are highlighted in blue.</p>
-      <p>learn more tag with pull down here?</p>
-      <p>Hiragana are the simple, rounded characters. They are highlighted in red.</p>
-      <p>Katakana are the simple, angular characters. They are highlighted in green.</p>
-      <div class="js-word" aria-live="assertive"></div>
-    </section>
-    <section class="kanji" role='region'>
-      <h2>Kanji</h2>
-      <div class="js-kanji"></div>
-    </section>
-    <!-- <section class="hiragana" role='region'>
+  <div class="container">
+    <main role='main'>
+      <section class='search-area' role='region'>
+        <h1>ヾ(＠⌒ー⌒＠)ノ</h1>
+        <h1 class='title'>Learn Some Japanese</h1>
+        <form action="#" class="js-search-form">
+          <input type="search" class="js-query" placeholder='Enter an English word'>
+          <button type="submit">Search</button>
+        </form>
+      </section>
+      <section class='word' role='region'>
+        <span class="js-word-english word-english"></span> /
+        <span class="js-romaji word-romaji romaji-color" aria-live="assertive"></span> /
+        <span class="js-word word-kanji-kana"></span>
+        <section class="learn-more">
+          <br>
+          <h3>What does all of this mean?</h3>
+          <p>
+            <span class='kanji-color'>Kanji</span> are complex characters taken from Chinese.</p>
+          <p>
+            <span class="hiragana-color">Hiragana</span> are the rounder, more simple characters. They are phonetic.</p>
+          <p>
+            <span class="katakana-color">Katakana</span> are the more angular characters. They're usually used for loan words.</p>
+          <p>And
+            <span class="romaji-color">Romaji</span> are Japanese words written in the Latin alphabet.</p>
+        </section>
+      </section>
+      <section class="kanji" role='region'>
+        <h2>Kanji</h2>
+        <div class="js-kanji kanji"></div>
+      </section>
+      <!-- <section class="hiragana" role='region'>
       <h2>Hiragana</h2>
       <div class="js-hiragana"></div>
     </section>
@@ -50,16 +52,10 @@
       <h2>Katakana</h2>
       <div class="js-katakana"></div>
     </section> -->
-  </main>
-  <footer role='contentinfo'>
-    <br>
-    <br>
-    <br>
-    <hr> word data from
-    <a href="https://glosbe.com/a-api">glosbe api</a>, kanji data from
-    <a href="https://app.kanjialive.com/api/docs">kanji alive api</a>, and word/kanji readings from
-    <a href="https://developer.yahoo.co.jp/webapi/jlp/furigana/v1/furigana.html">yahoo furigana api</a>
-  </footer>
+    </main>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
   <script src="bundle.js"></script>
 </body>
 
