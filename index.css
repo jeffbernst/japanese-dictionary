@@ -1,5 +1,10 @@
+/* style inspiration 
+kinda funny games daily
+hotline miami
+*/
+
 body {
-  padding-top: 50px;
+  padding: 75px 0;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -13,6 +18,7 @@ body {
 
 .search-area,
 .word,
+.learn-more,
 .kanji {
   text-align: center;
   margin-bottom: 50px;
@@ -35,14 +41,25 @@ body {
 }
 
 .word,
+.learn-more,
 .kanji,
 .hiragana,
 .katakana {
   display: none;
 }
 
-.word-romaji,
-.word-kanji-kana,
-.word-english {
-  font-size: 40px;
+.word {
+  font-size: 50px;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.kanji {
+  border: 1px solid blue;
+}
+
+.hiragana {
+  border: 1px solid red;
 }

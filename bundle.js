@@ -1,18 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // TO DO LIST
-// sections flash on page reload
 // sometimes kanji aren't displayed in order
 // i think i need to get the info from the api call and then push it into an array in the proper order,
 // then cycle through the array in order when i display
 // everything showing up at different times
-// clean up code!
-// add color for romaji
 // add behavior for when word isn't found
-// maybe move alphabet descriptions to being a subtitle of their respective section
-// so start with romaji section up top, and the english word above that just below search bar
-// or maybe up top show "englishWord / romaji / japaneseWord" with romaji and jp highlighted
 // can offer up different info depending on what's displayed, for example a word with kanji and hiragana
-// could bring up info about how kanji only replaces some of the hiragana
+// what's best way to transfer data between functions if global variables are a bad idea
+// loading spinner
 
 // doesn't properly convert ha in konnichiwa
 // won't return anything for japanese
@@ -29,18 +24,20 @@ let englishWord = '';
 
 const FADE_TIME = 600;
 
-// i can't get an init function to work for some reason!
+function startApp() {
+  watchSubmit();
+}
 
 function watchSubmit() {
   $('.js-search-form').submit(event => {
     event.preventDefault();
     hideStuff();
-    clearVariables();
-    englishWord = $(this)
+    clearDivs();
+    englishWord = $(event.currentTarget)
       .find('.js-query')
       .val();
     getWordFromApi(englishWord, displayWordSearchData);
-    $(this)
+    $(event.currentTarget)
       .find('.js-query')
       .val('');
   });
@@ -48,15 +45,16 @@ function watchSubmit() {
 
 function hideStuff() {
   $('.word').hide();
+  $('.learn-more').hide();
   $('.kanji').hide();
-  $('.hirakana').hide();
+  $('.hiragana').hide();
   $('.katakana').hide();
 }
 
-function clearVariables() {
+function clearDivs() {
   $('.js-word').html('');
   $('.js-kanji').html('');
-  $('.js-hirakana').html('');
+  $('.js-hiragana').html('');
   $('.js-katakana').html('');
 }
 
@@ -76,10 +74,16 @@ function getWordFromApi(searchTerm, callback) {
   $.ajax(query);
 }
 
+// make section for alert! right now put it in learn more
 function displayWordSearchData(data) {
-  japaneseWord = data.tuc[0].phrase.text;
-  getWordReadingFromApi(japaneseWord, displayWordReadingData);
-  highlightCharacters();
+  if (data.tuc.length === 0) {
+    $('.learn-more').text('sorry, nothing found!');
+    $('.learn-more').fadeIn(FADE_TIME);
+  } else {
+    japaneseWord = data.tuc[0].phrase.text;
+    getWordReadingFromApi(japaneseWord, displayWordReadingData);
+    highlightCharacters();
+  }
 }
 
 function getWordReadingFromApi(searchTerm, callback) {
@@ -109,20 +113,33 @@ function displayWordReadingData(data) {
   }
   let cleanedWordRomaji = hepburn.cleanRomaji(wordRomaji).toLowerCase();
   $('.js-romaji').text(cleanedWordRomaji);
+  fadeInContent();
+}
+
+function fadeInContent() {
   $('.word').fadeIn(FADE_TIME);
+  $('.learn-more').fadeIn(FADE_TIME);
+  if (!$('.js-kanji').is(':empty')) $('.kanji').fadeIn(FADE_TIME);
+  if (!$('.js-hiragana').is(':empty')) $('.hiragana').fadeIn(FADE_TIME);
 }
 
 function highlightCharacters() {
+  let containsKanji = false;
+  let containsHiragana = false;
+  let containsKatakana = false;
   let charArray = japaneseWord.split('');
   let charLabelArray = charArray.map(char => {
     if (
       (char >= '\u4e00' && char <= '\u9faf') ||
       (char >= '\u3400' && char <= '\u4dbf')
     ) {
+      containsKanji = true;
       return 'kanji';
     } else if (char >= '\u3040' && char <= '\u309f') {
+      containsHiragana = true;
       return 'hiragana';
     } else if (char >= '\u30a0' && char <= '\u30ff') {
+      containsKatakana = true;
       return ' katakana';
     } else {
       return false;
@@ -135,25 +152,25 @@ function highlightCharacters() {
     .join('');
   $('.js-word').html(wordWithMarkup);
   $('.js-word-english').html(englishWord);
-  requestKanjiData(charArray, charLabelArray);
+  requestKanjiData(charArray, charLabelArray, containsKanji);
+  displayHiraganaInfo(charArray, charLabelArray, containsHiragana);
 }
 
-function requestKanjiData(charArray, charLabelArray) {
+function requestKanjiData(charArray, charLabelArray, containsKanji) {
   let kanjiArray = [];
-  charArray.forEach((char, index) => {
-    if (charLabelArray[index] === 'kanji') kanjiArray.push(char);
-  });
-  if (kanjiArray.length !== 0) {
+  // charArray.forEach((char, index) => {
+  //   if (charLabelArray[index] === 'kanji') kanjiArray.push(char);
+  // });
+  // if (kanjiArray.length !== 0) {
+  if (containsKanji) {
+    charArray.forEach((char, index) => {
+      if (charLabelArray[index] === 'kanji') kanjiArray.push(char);
+    });
     kanjiArray.forEach(char =>
       getKanjiInfoFromApi(char, displayKanjiSearchData)
     );
   }
 }
-
-// let hiraganaArray = [];
-// let katakanaArray = [];
-// else if (charLabelArray[index] === 'hiragana') hiraganaArray.push(char);
-// else if (charLabelArray[index] === 'katakana') katakanaArray.push(char);
 
 function getKanjiInfoFromApi(searchTerm, callback) {
   const query = {
@@ -179,16 +196,25 @@ function displayKanjiSearchData(data) {
     <video width="320" height="240" controls poster="${kanjiVidPoster}">
     <source src="${kanjiVid}" type="video/mp4">
     Your browser does not support the video tag.</video>`);
-  $('.kanji').fadeIn(FADE_TIME);
   $kanjiDiv
     .hide()
     .appendTo('.js-kanji')
     .fadeIn(FADE_TIME);
 }
 
-function displayHiraganaInfo(hiraganaArray) {}
+function displayHiraganaInfo(charArray, charLabelArray, containsHiragana) {
+  let hiraganaArray = [];
+  charArray.forEach((char, index) => {
+    if (charLabelArray[index] === 'hiragana') hiraganaArray.push(char);
+  });
+  if (hiraganaArray.length !== 0) {
+    hiraganaArray.forEach(char =>
+      $('.js-hiragana').append(`<div>${char}</div>`)
+    );
+  }
+}
 
-$(watchSubmit);
+$(startApp);
 
 },{"hepburn":3,"xml-js":6}],2:[function(require,module,exports){
 module.exports = function(str, regex, map) {
