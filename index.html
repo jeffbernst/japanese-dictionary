@@ -10,19 +10,26 @@
   <link href="index.css" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Leckerli+One" rel="stylesheet">
 </head>
 
 <body>
   <div class="container">
     <main role='main'>
-      <section class='search-area' role='region'>
-        <h1>ヾ(＠⌒ー⌒＠)ノ</h1>
-        <h1 class='title'>Learn Some Japanese</h1>
-        <form action="#" class="js-search-form">
-          <input type="search" class="js-query" placeholder='Enter an English word'>
-          <button type="submit">Search</button>
-        </form>
-      </section>
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <section class='search-area' role='region'>
+            <h1 class='smiley'>ヾ(＠⌒ー⌒＠)ノ</h1>
+            <h1 class='title'>Learn Some Japanese</h1>
+            <form action="#" class="js-search-form input-group">
+              <input type="search" class="js-query form-control" placeholder='Enter an English word' aria-label="Enter an English word">
+              <span class="input-group-btn">
+                <button class="btn btn-dark" type="submit">Search</button>
+              </span>
+            </form>
+          </section>
+        </div>
+      </div>
       <section class='word' role='region'>
         <span class="js-word-english word-english"></span> /
         <span class="js-romaji romaji-color" aria-live="assertive"></span> /

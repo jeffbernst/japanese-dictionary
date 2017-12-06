@@ -4,11 +4,13 @@
 // about this site page?
 // remove old npm module for romaji conversion
 // add auto populated link to forvo for pronunciations, this format: https://forvo.com/search/%E8%A9%A6%E9%A8%93/
+// loading spinner -- maybe animated text kaomoji that says loading?
+// bootstrap okay for responsive
 
 // STYLE
-// loading spinner -- maybe animated text kaomoji that says loading?
 // favicon
 // show search bar in middle of screen before searching, then shift it up when showing results
+// polka dot focus around search bar
 
 // BUGS
 // doesn't properly convert ha in konnichiwa (also apostrophe is wrong in this case i think)

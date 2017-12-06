@@ -1,19 +1,24 @@
-/* style inspiration 
-kinda funny games daily
-hotline miami
-*/
-
 body {
   padding: 75px 0;
   font-family: 'Open Sans', sans-serif;
 }
 
 .title {
-  font-family: 'Permanent Marker', cursive;
-  /* background: -webkit-linear-gradient(#d742f4, #0f1a83);
+  font-family: 'Leckerli One', cursive;
+  color: #444;
+  /* background: -webkit-linear-gradient(#f551cd, #860ba4);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent; */
+}
+
+.smiley {
+  color: #52e7d8;
+  -webkit-text-stroke: 1px black;
+}
+
+video {
+  border: 1px solid black;
 }
 
 .search-area,
@@ -37,19 +42,19 @@ body {
 }
 
 .kanji-color {
-  color: blue;
+  color: #52e7d8;
 }
 
 .hiragana-color {
-  color: red;
+  color: #f020a3;
 }
 
 .katakana-color {
-  color: green;
+  color: #ec4f19;
 }
 
 .romaji-color {
-  color: purple;
+  color: #501d50;
 }
 
 .word {
@@ -69,17 +74,17 @@ body {
 }
 
 .kanji {
-  border: 5px solid blue;
+  border: 5px solid #52e7d8;
 }
 
 .hiragana {
-  border: 5px solid red;
+  border: 5px solid #f020a3;
 }
 
 .romaji {
-  border: 5px solid purple;
+  border: 5px solid #501d50;
 }
 
 .katakana {
-  border: 5px solid green;
+  border: 5px solid #ec4f19;
 }
