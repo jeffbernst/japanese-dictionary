@@ -21,8 +21,6 @@
 // https://css-tricks.com/multiple-simultaneous-ajax-requests-one-callback-jquery/
 // http://jsfiddle.net/EN8nc/164/
 
-const convert = require('xml-js');
-const wanakana = require('wanakana');
 const kuroshiro = require('kuroshiro');
 
 const FADE_TIME = 600;
@@ -87,6 +85,7 @@ function displayWordSearchData(data) {
     $('.learn-more').fadeIn(FADE_TIME);
   } else {
     let japaneseWord = data.tuc[0].phrase.text;
+    console.log(japaneseWord);
     // getWordReadingFromApi(japaneseWord, displayWordReadingData);
     let wordRomaji = kuroshiro.toRomaji(japaneseWord);
     $('.js-romaji').text(wordRomaji);
@@ -95,43 +94,35 @@ function displayWordSearchData(data) {
   }
 }
 
-function getWordReadingFromApi(searchTerm, callback) {
-  const query = {
-    url:
-      'https://jeff-cors-anywhere-nzumhvclct.now.sh/https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
-    dataType: 'text',
-    success: callback,
-    data: {
-      appid: 'dj00aiZpPXBFWnZSUGdRTFZJeSZzPWNvbnN1bWVyc2VjcmV0Jng9OWI-',
-      sentence: searchTerm
-    }
-  };
-  $.ajax(query);
-}
+// function getWordReadingFromApi(searchTerm, callback) {
+//   const query = {
+//     url:
+//       'https://jeff-cors-anywhere-nzumhvclct.now.sh/https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
+//     dataType: 'text',
+//     success: callback,
+//     data: {
+//       appid: 'dj00aiZpPXBFWnZSUGdRTFZJeSZzPWNvbnN1bWVyc2VjcmV0Jng9OWI-',
+//       sentence: searchTerm
+//     }
+//   };
+//   $.ajax(query);
+// }
 
-function displayWordReadingData(data) {
-  let result = convert.xml2js(data, { compact: true, ignoreDeclaration: true });
-  let wordReadingData = result.ResultSet.Result.WordList.Word;
-  let wordFurigana = '';
-  if (Array.isArray(wordReadingData)) {
-    wordFurigana = wordReadingData.reduce((accumulator, currentValue) => {
-      return accumulator.Furigana._text + currentValue.Furigana._text;
-    });
-  } else {
-    wordFurigana = wordReadingData.Furigana._text;
-  }
-  // if (Array.isArray(wordRomajiArray)) {
-  //   wordRomaji = wordRomajiArray.reduce((accumulator, currentValue) => {
-  //     return accumulator.Roman._text + currentValue.Roman._text;
-  //   });
-  // } else {
-  //   wordRomaji = wordRomajiArray.Roman._text;
-  // }
-  // let cleanedWordRomaji = hepburn.cleanRomaji(wordRomaji).toLowerCase();
-  let wordRomaji = wanakana.toRomaji(wordFurigana);
-  $('.js-romaji').text(wordRomaji);
-  fadeInContent();
-}
+// function displayWordReadingData(data) {
+//   let result = convert.xml2js(data, { compact: true, ignoreDeclaration: true });
+//   let wordReadingData = result.ResultSet.Result.WordList.Word;
+//   let wordFurigana = '';
+//   if (Array.isArray(wordReadingData)) {
+//     wordFurigana = wordReadingData.reduce((accumulator, currentValue) => {
+//       return accumulator.Furigana._text + currentValue.Furigana._text;
+//     });
+//   } else {
+//     wordFurigana = wordReadingData.Furigana._text;
+//   }
+//   let wordRomaji = wanakana.toRomaji(wordFurigana);
+//   $('.js-romaji').text(wordRomaji);
+//   fadeInContent();
+// }
 
 function fadeInContent() {
   $('.word').fadeIn(FADE_TIME);

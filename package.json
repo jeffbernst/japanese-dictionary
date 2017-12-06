@@ -16,5 +16,7 @@
     "url": "https://github.com/jeffbernst/api-capstone/issues"
   },
   "homepage": "https://github.com/jeffbernst/api-capstone#readme",
-  "dependencies": {}
+  "dependencies": {
+    "kuroshiro": "^0.1.5"
+  }
 }
