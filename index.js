@@ -3,7 +3,6 @@
 // about this site page?
 // add auto populated link to forvo for pronunciations, this format: https://forvo.com/search/%E8%A9%A6%E9%A8%93/
 // loading spinner -- maybe animated text kaomoji that says loading? -- css animations
-// bootstrap okay for responsive
 // add sentences on front page for explanation of site
 // remove bootstrap
 
@@ -24,9 +23,7 @@
 
 const convert = require('xml-js');
 const wanakana = require('wanakana');
-
-let japaneseWord = '';
-let englishWord = '';
+const kuroshiro = require('kuroshiro');
 
 const FADE_TIME = 600;
 
@@ -39,9 +36,10 @@ function watchSubmit() {
     event.preventDefault();
     hideStuff();
     clearDivs();
-    englishWord = $(event.currentTarget)
+    let englishWord = $(event.currentTarget)
       .find('.js-query')
       .val();
+    $('.js-word-english').html(englishWord);
     getWordFromApi(englishWord, displayWordSearchData);
     $(event.currentTarget)
       .find('.js-query')
@@ -88,8 +86,11 @@ function displayWordSearchData(data) {
     $('.learn-more').text('sorry, nothing found!');
     $('.learn-more').fadeIn(FADE_TIME);
   } else {
-    japaneseWord = data.tuc[0].phrase.text;
-    getWordReadingFromApi(japaneseWord, displayWordReadingData);
+    let japaneseWord = data.tuc[0].phrase.text;
+    // getWordReadingFromApi(japaneseWord, displayWordReadingData);
+    let wordRomaji = kuroshiro.toRomaji(japaneseWord);
+    $('.js-romaji').text(wordRomaji);
+    fadeInContent();
     highlightCharacters();
   }
 }
@@ -141,7 +142,7 @@ function fadeInContent() {
   if (!$('.js-katakana').is(':empty')) $('.katakana').fadeIn(FADE_TIME);
 }
 
-function highlightCharacters() {
+function highlightCharacters(japaneseWord) {
   // can eliminate some of these contains variables?
   let containsKanji = false;
   let containsHiragana = false;
@@ -170,7 +171,6 @@ function highlightCharacters() {
     })
     .join('');
   $('.js-word').html(wordWithMarkup);
-  $('.js-word-english').html(englishWord);
   requestKanjiData(charArray, charLabelArray, containsKanji);
   displayHiraganaInfo(charArray, charLabelArray, containsHiragana);
   displayKatakanaInfo(charArray, charLabelArray);
