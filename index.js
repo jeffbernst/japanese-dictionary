@@ -25,9 +25,6 @@
 const convert = require('xml-js');
 const wanakana = require('wanakana');
 
-let japaneseWord = '';
-let englishWord = '';
-
 const FADE_TIME = 600;
 
 function startApp() {
@@ -39,9 +36,10 @@ function watchSubmit() {
     event.preventDefault();
     hideStuff();
     clearDivs();
-    englishWord = $(event.currentTarget)
+    let englishWord = $(event.currentTarget)
       .find('.js-query')
       .val();
+    $('.js-word-english').html(englishWord);
     getWordFromApi(englishWord, displayWordSearchData);
     $(event.currentTarget)
       .find('.js-query')
@@ -88,9 +86,9 @@ function displayWordSearchData(data) {
     $('.learn-more').text('sorry, nothing found!');
     $('.learn-more').fadeIn(FADE_TIME);
   } else {
-    japaneseWord = data.tuc[0].phrase.text;
+    let japaneseWord = data.tuc[0].phrase.text;
     getWordReadingFromApi(japaneseWord, displayWordReadingData);
-    highlightCharacters();
+    highlightCharacters(japaneseWord);
   }
 }
 
@@ -119,14 +117,6 @@ function displayWordReadingData(data) {
   } else {
     wordFurigana = wordReadingData.Furigana._text;
   }
-  // if (Array.isArray(wordRomajiArray)) {
-  //   wordRomaji = wordRomajiArray.reduce((accumulator, currentValue) => {
-  //     return accumulator.Roman._text + currentValue.Roman._text;
-  //   });
-  // } else {
-  //   wordRomaji = wordRomajiArray.Roman._text;
-  // }
-  // let cleanedWordRomaji = hepburn.cleanRomaji(wordRomaji).toLowerCase();
   let wordRomaji = wanakana.toRomaji(wordFurigana);
   $('.js-romaji').text(wordRomaji);
   fadeInContent();
@@ -141,11 +131,8 @@ function fadeInContent() {
   if (!$('.js-katakana').is(':empty')) $('.katakana').fadeIn(FADE_TIME);
 }
 
-function highlightCharacters() {
-  // can eliminate some of these contains variables?
+function highlightCharacters(japaneseWord) {
   let containsKanji = false;
-  let containsHiragana = false;
-  let containsKatakana = false;
   let charArray = japaneseWord.split('');
   let charLabelArray = charArray.map(char => {
     if (
@@ -155,10 +142,8 @@ function highlightCharacters() {
       containsKanji = true;
       return 'kanji';
     } else if (char >= '\u3040' && char <= '\u309f') {
-      containsHiragana = true;
       return 'hiragana';
     } else if (char >= '\u30a0' && char <= '\u30ff') {
-      containsKatakana = true;
       return 'katakana';
     } else {
       return false;
@@ -170,18 +155,13 @@ function highlightCharacters() {
     })
     .join('');
   $('.js-word').html(wordWithMarkup);
-  $('.js-word-english').html(englishWord);
   requestKanjiData(charArray, charLabelArray, containsKanji);
-  displayHiraganaInfo(charArray, charLabelArray, containsHiragana);
+  displayHiraganaInfo(charArray, charLabelArray);
   displayKatakanaInfo(charArray, charLabelArray);
 }
 
 function requestKanjiData(charArray, charLabelArray, containsKanji) {
   let kanjiArray = [];
-  // charArray.forEach((char, index) => {
-  //   if (charLabelArray[index] === 'kanji') kanjiArray.push(char);
-  // });
-  // if (kanjiArray.length !== 0) {
   if (containsKanji) {
     charArray.forEach((char, index) => {
       if (charLabelArray[index] === 'kanji') kanjiArray.push(char);
@@ -206,6 +186,10 @@ function getKanjiInfoFromApi(searchTerm, callback) {
 
 function displayKanjiSearchData(data) {
   let kanjiData = JSON.parse(data.responseText);
+  if (typeof kanjiData.kanji === 'undefined') {
+    $('.js-kanji').text(`Sorry, the character isn't in our database!`);
+    return;
+  }
   let kanjiChar = kanjiData.kanji.character;
   let kanjiVid = kanjiData.kanji.video.mp4;
   let kanjiVidPoster = kanjiData.kanji.video.poster;
@@ -232,7 +216,7 @@ function displayKanjiSearchData(data) {
     .fadeIn(FADE_TIME);
 }
 
-function displayHiraganaInfo(charArray, charLabelArray, containsHiragana) {
+function displayHiraganaInfo(charArray, charLabelArray) {
   let hiraganaArray = [];
   charArray.forEach((char, index) => {
     if (charLabelArray[index] === 'hiragana') hiraganaArray.push(char);
