@@ -62,7 +62,7 @@ function hideStuff() {
 
 function clearDivs() {
   $('.js-word').html('');
-  $('.romaji').html('');
+  $('.js-romaji').html('');
   $('.js-kanji').html('');
   $('.js-hiragana').html('');
   $('.js-katakana').html('');
@@ -137,6 +137,7 @@ function displayWordReadingData(data) {
 function fadeInContent() {
   $('.word').fadeIn(FADE_TIME);
   $('.learn-more').fadeIn(FADE_TIME);
+  if (!$('.js-romaji').is(':empty')) $('.romaji').fadeIn(FADE_TIME);
   if (!$('.js-kanji').is(':empty')) $('.kanji').fadeIn(FADE_TIME);
   if (!$('.js-hiragana').is(':empty')) $('.hiragana').fadeIn(FADE_TIME);
 }
