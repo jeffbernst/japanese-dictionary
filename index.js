@@ -1,11 +1,8 @@
 // TO DO LIST
-// display katakana section
-// clean up kanji section to show more info and in better way
-// clean up hiragana and katakana sections to show what i want
-// add romaji section and info
 // check bug with search for 'japan' (i think it's that the kanji search returns nothing)
 // about this site page?
 // remove old npm module for romaji conversion
+// add auto populated link to forvo for pronunciations, this format: https://forvo.com/search/%E8%A9%A6%E9%A8%93/
 
 // STYLE
 // loading spinner -- maybe animated text kaomoji that says loading?
@@ -139,9 +136,11 @@ function fadeInContent() {
   if (!$('.js-romaji').is(':empty')) $('.romaji').fadeIn(FADE_TIME);
   if (!$('.js-kanji').is(':empty')) $('.kanji').fadeIn(FADE_TIME);
   if (!$('.js-hiragana').is(':empty')) $('.hiragana').fadeIn(FADE_TIME);
+  if (!$('.js-katakana').is(':empty')) $('.katakana').fadeIn(FADE_TIME);
 }
 
 function highlightCharacters() {
+  // can eliminate some of these contains variables?
   let containsKanji = false;
   let containsHiragana = false;
   let containsKatakana = false;
@@ -158,7 +157,7 @@ function highlightCharacters() {
       return 'hiragana';
     } else if (char >= '\u30a0' && char <= '\u30ff') {
       containsKatakana = true;
-      return ' katakana';
+      return 'katakana';
     } else {
       return false;
     }
@@ -172,6 +171,7 @@ function highlightCharacters() {
   $('.js-word-english').html(englishWord);
   requestKanjiData(charArray, charLabelArray, containsKanji);
   displayHiraganaInfo(charArray, charLabelArray, containsHiragana);
+  displayKatakanaInfo(charArray, charLabelArray);
 }
 
 function requestKanjiData(charArray, charLabelArray, containsKanji) {
@@ -208,12 +208,22 @@ function displayKanjiSearchData(data) {
   let kanjiVid = kanjiData.kanji.video.mp4;
   let kanjiVidPoster = kanjiData.kanji.video.poster;
   let kanjiMeaning = kanjiData.kanji.meaning.english;
+  let kanjiStrokes = kanjiData.kanji.strokes.count;
+  let kanjiGrade = kanjiData.references.grade;
+  if (kanjiGrade === null) kanjiGrade = 'not listed';
   let $kanjiDiv = $(`
-    <div>${kanjiChar}</div>
-    <div>${kanjiMeaning}</div>
-    <video width="320" height="240" controls poster="${kanjiVidPoster}">
-    <source src="${kanjiVid}" type="video/mp4">
-    Your browser does not support the video tag.</video>`);
+    <div class='row'>
+      <div class='col-md-6'>
+        <video width="320" height="240" controls poster="${kanjiVidPoster}">
+          <source src="${kanjiVid}" type="video/mp4">
+          Your browser does not support the video tag.</video>
+      </div>
+      <div class='col-md-6'>
+        <div>Meaning: ${kanjiMeaning}</div>
+        <div>Strokes: ${kanjiStrokes}</div>
+        <div>Grade Level: ${kanjiGrade}</div>
+      </div>
+    </div>`);
   $kanjiDiv
     .hide()
     .appendTo('.js-kanji')
@@ -227,7 +237,19 @@ function displayHiraganaInfo(charArray, charLabelArray, containsHiragana) {
   });
   if (hiraganaArray.length !== 0) {
     hiraganaArray.forEach(char =>
-      $('.js-hiragana').append(`<div>${char}</div>`)
+      $('.js-hiragana').append(`<span class='large-character'>${char}</span>`)
+    );
+  }
+}
+
+function displayKatakanaInfo(charArray, charLabelArray) {
+  let katakanaArray = [];
+  charArray.forEach((char, index) => {
+    if (charLabelArray[index] === 'katakana') katakanaArray.push(char);
+  });
+  if (katakanaArray.length !== 0) {
+    katakanaArray.forEach(char =>
+      $('.js-katakana').append(`<span class='large-character'>${char}</span>`)
     );
   }
 }
