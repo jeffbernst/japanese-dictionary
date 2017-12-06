@@ -1,22 +1,30 @@
 // TO DO LIST
-// sometimes kanji aren't displayed in order
-// i think i need to get the info from the api call and then push it into an array in the proper order,
-// then cycle through the array in order when i display
-// everything showing up at different times
-// add behavior for when word isn't found
-// can offer up different info depending on what's displayed, for example a word with kanji and hiragana
-// what's best way to transfer data between functions if global variables are a bad idea
-// loading spinner
+// display katakana section
+// clean up kanji section to show more info and in better way
+// clean up hiragana and katakana sections to show what i want
+// add romaji section and info
+// check bug with search for 'japan' (i think it's that the kanji search returns nothing)
+// about this site page?
+// remove old npm module for romaji conversion
 
-// doesn't properly convert ha in konnichiwa
+// STYLE
+// loading spinner -- maybe animated text kaomoji that says loading?
+// favicon
+// show search bar in middle of screen before searching, then shift it up when showing results
+
+// BUGS
+// doesn't properly convert ha in konnichiwa (also apostrophe is wrong in this case i think)
 // won't return anything for japanese
+// remove global variables
+// sometimes kanji aren't displayed in order, use promise
 
 // use promise to display things at right time:
 // https://css-tricks.com/multiple-simultaneous-ajax-requests-one-callback-jquery/
 // http://jsfiddle.net/EN8nc/164/
 
-let convert = require('xml-js');
-let hepburn = require('hepburn');
+const convert = require('xml-js');
+const hepburn = require('hepburn');
+const wanakana = require('wanakana');
 
 let japaneseWord = '';
 let englishWord = '';
@@ -44,6 +52,7 @@ function watchSubmit() {
 
 function hideStuff() {
   $('.word').hide();
+  $('.romaji').hide();
   $('.learn-more').hide();
   $('.kanji').hide();
   $('.hiragana').hide();
@@ -52,6 +61,7 @@ function hideStuff() {
 
 function clearDivs() {
   $('.js-word').html('');
+  $('.romaji').html('');
   $('.js-kanji').html('');
   $('.js-hiragana').html('');
   $('.js-katakana').html('');
@@ -101,17 +111,25 @@ function getWordReadingFromApi(searchTerm, callback) {
 
 function displayWordReadingData(data) {
   let result = convert.xml2js(data, { compact: true, ignoreDeclaration: true });
-  let wordRomajiArray = result.ResultSet.Result.WordList.Word;
-  let wordRomaji = '';
-  if (Array.isArray(wordRomajiArray)) {
-    wordRomaji = wordRomajiArray.reduce((accumulator, currentValue) => {
-      return accumulator.Roman._text + currentValue.Roman._text;
+  let wordReadingData = result.ResultSet.Result.WordList.Word;
+  let wordFurigana = '';
+  if (Array.isArray(wordReadingData)) {
+    wordFurigana = wordReadingData.reduce((accumulator, currentValue) => {
+      return accumulator.Furigana._text + currentValue.Furigana._text;
     });
   } else {
-    wordRomaji = wordRomajiArray.Roman._text;
+    wordFurigana = wordReadingData.Furigana._text;
   }
-  let cleanedWordRomaji = hepburn.cleanRomaji(wordRomaji).toLowerCase();
-  $('.js-romaji').text(cleanedWordRomaji);
+  // if (Array.isArray(wordRomajiArray)) {
+  //   wordRomaji = wordRomajiArray.reduce((accumulator, currentValue) => {
+  //     return accumulator.Roman._text + currentValue.Roman._text;
+  //   });
+  // } else {
+  //   wordRomaji = wordRomajiArray.Roman._text;
+  // }
+  // let cleanedWordRomaji = hepburn.cleanRomaji(wordRomaji).toLowerCase();
+  let wordRomaji = wanakana.toRomaji(wordFurigana);
+  $('.js-romaji').text(wordRomaji);
   fadeInContent();
 }
 

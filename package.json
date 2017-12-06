@@ -18,6 +18,7 @@
   "homepage": "https://github.com/jeffbernst/api-capstone#readme",
   "dependencies": {
     "hepburn": "^1.0.0",
+    "wanakana": "^2.3.1",
     "xml-js": "^1.5.2"
   }
 }

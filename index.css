@@ -42,6 +42,7 @@ body {
 
 .word,
 .learn-more,
+.romaji,
 .kanji,
 .hiragana,
 .katakana {
@@ -57,9 +58,13 @@ body {
 }
 
 .kanji {
-  border: 1px solid blue;
+  border: 5px solid blue;
 }
 
 .hiragana {
-  border: 1px solid red;
+  border: 5px solid red;
+}
+
+.romaji {
+  border: 5px solid purple;
 }
