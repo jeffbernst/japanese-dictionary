@@ -1,10 +1,11 @@
 // TO DO LIST
 // check bug with search for 'japan' (i think it's that the kanji search returns nothing)
 // about this site page?
-// remove old npm module for romaji conversion
 // add auto populated link to forvo for pronunciations, this format: https://forvo.com/search/%E8%A9%A6%E9%A8%93/
-// loading spinner -- maybe animated text kaomoji that says loading?
+// loading spinner -- maybe animated text kaomoji that says loading? -- css animations
 // bootstrap okay for responsive
+// add sentences on front page for explanation of site
+// remove bootstrap
 
 // STYLE
 // favicon
@@ -22,7 +23,6 @@
 // http://jsfiddle.net/EN8nc/164/
 
 const convert = require('xml-js');
-const hepburn = require('hepburn');
 const wanakana = require('wanakana');
 
 let japaneseWord = '';
