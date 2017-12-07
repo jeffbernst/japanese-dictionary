@@ -15,32 +15,14 @@ function watchSubmit() {
       .find('.js-query')
       .val();
     $('.js-word-english').html(englishWord);
-    getWordFromApi(englishWord, displayWordSearchData);
+    getWordFromApi(englishWord, processWordData);
     $(event.currentTarget)
       .find('.js-query')
       .val('');
   });
 }
 
-function hideStuff() {
-  $('.word').hide();
-  $('.romaji').hide();
-  $('.learn-more').hide();
-  $('.kanji').hide();
-  $('.hiragana').hide();
-  $('.katakana').hide();
-}
-
-function clearDivs() {
-  $('.js-word').html('');
-  $('.js-romaji').html('');
-  $('.js-kanji').html('');
-  $('.js-hiragana').html('');
-  $('.js-katakana').html('');
-}
-
-function jishoTest(searchTerm, callback) {
-  console.log('running');
+function getWordFromApi(searchTerm, callback) {
   const query = {
     url:
       'https://jeff-cors-anywhere-nzumhvclct.now.sh/http://beta.jisho.org/api/v1/search/words',
@@ -52,17 +34,14 @@ function jishoTest(searchTerm, callback) {
   $.ajax(query);
 }
 
-function jishoDisplay(data) {
+function processWordData(data) {
   console.log(data);
-}
-
-function fadeInContent() {
-  $('.word').fadeIn(FADE_TIME);
-  $('.learn-more').fadeIn(FADE_TIME);
-  if (!$('.js-romaji').is(':empty')) $('.romaji').fadeIn(FADE_TIME);
-  if (!$('.js-kanji').is(':empty')) $('.kanji').fadeIn(FADE_TIME);
-  if (!$('.js-hiragana').is(':empty')) $('.hiragana').fadeIn(FADE_TIME);
-  if (!$('.js-katakana').is(':empty')) $('.katakana').fadeIn(FADE_TIME);
+  let wordData = [];
+  let size = data.data.length >= 5 ? 5 : data.data.length;
+  for (let i = 0; i < size; i++) {
+    wordData[i] = data.data[i];
+  }
+  console.log(wordData);
 }
 
 function requestKanjiData(charArray, charLabelArray, containsKanji) {
@@ -119,6 +98,32 @@ function displayKanjiSearchData(data) {
     .hide()
     .appendTo('.js-kanji')
     .fadeIn(FADE_TIME);
+}
+
+function fadeInContent() {
+  $('.word').fadeIn(FADE_TIME);
+  $('.learn-more').fadeIn(FADE_TIME);
+  if (!$('.js-romaji').is(':empty')) $('.romaji').fadeIn(FADE_TIME);
+  if (!$('.js-kanji').is(':empty')) $('.kanji').fadeIn(FADE_TIME);
+  if (!$('.js-hiragana').is(':empty')) $('.hiragana').fadeIn(FADE_TIME);
+  if (!$('.js-katakana').is(':empty')) $('.katakana').fadeIn(FADE_TIME);
+}
+
+function hideStuff() {
+  $('.word').hide();
+  $('.romaji').hide();
+  $('.learn-more').hide();
+  $('.kanji').hide();
+  $('.hiragana').hide();
+  $('.katakana').hide();
+}
+
+function clearDivs() {
+  $('.js-word').html('');
+  $('.js-romaji').html('');
+  $('.js-kanji').html('');
+  $('.js-hiragana').html('');
+  $('.js-katakana').html('');
 }
 
 $(startApp);

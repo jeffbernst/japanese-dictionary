@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>Learn Some Japanese</title>
+  <title>Japanese &harr; English Dictionary</title>
   <link href="index.css" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Leckerli+One" rel="stylesheet">
@@ -15,37 +15,29 @@
     <main role='main'>
       <section class='search-area' role='region'>
         <div class='smiley'>ヾ(＠⌒ー⌒＠)ノ</div>
-        <div class='title'>Learn Some Japanese</div>
+        <div class='title'>Japanese &harr; English Dictionary</div>
         <form action="#" class="js-search-form">
           <input type="search" class="js-query input-field" placeholder='Enter an English word'>
           <button type="submit" class='search-button'>Search</button>
         </form>
+        <div class="how-to">What is this site and how do I use it? (accordian)</div>
+      </section>
+      <section class="results">
+        <div class="left-column">
+          <div class="word-title">
+            Word&nbsp;
+            <span class="word-smiley">*･゜ﾟ･*:.｡..｡.:*･'(*ﾟ▽ﾟ*)'･*:.｡. .｡.:*･゜ﾟ･*</span>
+          </div>
+        </div>
+        <div class="right-column">
+
+        </div>
       </section>
       <section class='word' role='region'>
         <span class="js-word-english word-english"></span> /
         <span class="js-romaji romaji-color" aria-live="assertive"></span> /
         <span class="js-word word-kanji-kana"></span>
       </section>
-      <section class="learn-more"></section>
-      <section class="romaji" role='region'>
-        <h2>R&#333;maji</h2>
-        <p>Japanese words written in the latin alphabet</p>
-        <span class="js-romaji romaji-color large-font"></span>
-      </section>
-      <section class="kanji" role='region'>
-        <h2>Kanji</h2>
-        <p>complex characters originally from the Chinese language</p>
-        <div class="js-kanji"></div>
-      </section>
-      <section class="hiragana" role='region'>
-        <h2>Hiragana</h2>
-        <p>phonetic characters derived from more complex Chinese characters</p>
-        <div class="js-hiragana"></div>
-      </section>
-      <section class="katakana" role='region'>
-        <h2>Katakana</h2>
-        <p>similar to hiragana, but used primarily for loan words</p>
-        <span class="js-katakana katakana-color"></span>
       </section>
     </main>
   </div>

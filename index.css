@@ -7,13 +7,13 @@ body {
 .title {
   font-family: 'Leckerli One', cursive;
   color: #444;
-  font-size: 50px;
+  font-size: 35px;
 }
 
 .smiley {
   color: #52e7d8;
   -webkit-text-stroke: 1px black;
-  font-size: 50px;
+  font-size: 40px;
 }
 
 .input-field {
@@ -39,6 +39,20 @@ body {
   border-radius: 5px;
   border: 1px solid #999;
   font-size: 20px;
+  color: #888;
+}
+
+.how-to {
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+.word-title {
+  font-size: 20px;
+}
+
+.word-smiley {
+  font-size: 15px;
   color: #888;
 }
 
