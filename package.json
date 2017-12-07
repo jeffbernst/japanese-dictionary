@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/jeffbernst/api-capstone#readme",
   "dependencies": {
+    "japaneasy": "^0.2.2",
+    "unofficial-jisho-api": "^1.0.3",
     "wanakana": "^2.3.1",
     "xml-js": "^1.5.2"
   }

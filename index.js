@@ -3,6 +3,25 @@ const wanakana = require('wanakana');
 
 const FADE_TIME = 600;
 
+jishoTest('asdfasdf', jishoDisplay);
+
+function jishoTest(searchTerm, callback) {
+  console.log('running');
+  const query = {
+    url:
+      'https://jeff-cors-anywhere-nzumhvclct.now.sh/http://beta.jisho.org/api/v1/search/words',
+    success: callback,
+    data: {
+      keyword: searchTerm
+    }
+  };
+  $.ajax(query);
+}
+
+function jishoDisplay(data) {
+  console.log(data);
+}
+
 function startApp() {
   watchSubmit();
 }
