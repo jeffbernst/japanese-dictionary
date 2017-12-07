@@ -45,7 +45,7 @@ body {
 .word-title,
 .definition-title,
 .kanji-title {
-  font-size: 20px;
+  font-size: 22px;
   text-transform: uppercase;
   margin-bottom: 20px;
 }
@@ -60,9 +60,27 @@ hr {
 }
 
 .word-result,
-.definition-result,
-.kanji-result {
+.definition-result {
   margin-bottom: 20px;
+}
+
+.kanji-result {
+  margin-top: -15px;
+}
+
+.kanji-group {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.kanji-col-left {
+  margin-right: 20px;
+  display: inline-block;
+}
+
+.kanji-col-right {
+  display: inline-block;
 }
 
 /* .word-block {

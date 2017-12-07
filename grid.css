@@ -20,18 +20,6 @@
   clear: both;
 }
 
-.col-2,
-.col-3,
-.col-4,
-.col-5,
-.col-6,
-.col-8,
-.col-12 {
-  float: left;
-  padding-left: 1.04166666%;
-  padding-right: 1.04166666%;
-}
-
 /* Mobile defaults */
 .col-2,
 .col-3,
@@ -41,6 +29,9 @@
 .col-8,
 .col-12 {
   width: 100%;
+  float: left;
+  padding-left: 1.04166666%;
+  padding-right: 1.04166666%;
 }
 
 /* Non-mobile, grid */
