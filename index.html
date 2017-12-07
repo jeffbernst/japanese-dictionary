@@ -5,31 +5,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Learn Some Japanese</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
-    crossorigin="anonymous">
   <link href="index.css" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Leckerli+One" rel="stylesheet">
 </head>
 
 <body>
   <div class="container">
     <main role='main'>
-      <div class="row">
-        <div class="col-md-8 offset-md-2">
-          <section class='search-area' role='region'>
-            <h1 class='smiley'>ヾ(＠⌒ー⌒＠)ノ</h1>
-            <h1 class='title'>Learn Some Japanese</h1>
-            <form action="#" class="js-search-form input-group">
-              <input type="search" class="js-query form-control" placeholder='Enter an English word' aria-label="Enter an English word">
-              <span class="input-group-btn">
-                <button class="btn btn-dark" type="submit">Search</button>
-              </span>
-            </form>
-          </section>
-        </div>
-      </div>
+      <section class='search-area' role='region'>
+        <div class='smiley'>ヾ(＠⌒ー⌒＠)ノ</div>
+        <div class='title'>Learn Some Japanese</div>
+        <form action="#" class="js-search-form">
+          <input type="search" class="js-query input-field" placeholder='Enter an English word'>
+          <button type="submit" class='search-button'>Search</button>
+        </form>
+      </section>
       <section class='word' role='region'>
         <span class="js-word-english word-english"></span> /
         <span class="js-romaji romaji-color" aria-live="assertive"></span> /

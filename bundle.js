@@ -1,28 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// TO DO LIST
-// check bug with search for 'japan' (i think it's that the kanji search returns nothing)
-// about this site page?
-// add auto populated link to forvo for pronunciations, this format: https://forvo.com/search/%E8%A9%A6%E9%A8%93/
-// loading spinner -- maybe animated text kaomoji that says loading? -- css animations
-// bootstrap okay for responsive
-// add sentences on front page for explanation of site
-// remove bootstrap
-
-// STYLE
-// favicon
-// show search bar in middle of screen before searching, then shift it up when showing results
-// polka dot focus around search bar
-
-// BUGS
-// doesn't properly convert ha in konnichiwa (also apostrophe is wrong in this case i think)
-// won't return anything for japanese
-// remove global variables
-// sometimes kanji aren't displayed in order, use promise
-
-// use promise to display things at right time:
-// https://css-tricks.com/multiple-simultaneous-ajax-requests-one-callback-jquery/
-// http://jsfiddle.net/EN8nc/164/
-
 const convert = require('xml-js');
 const wanakana = require('wanakana');
 
@@ -162,8 +138,8 @@ function highlightCharacters(japaneseWord) {
 }
 
 function requestKanjiData(charArray, charLabelArray, containsKanji) {
-  let kanjiArray = [];
   if (containsKanji) {
+    let kanjiArray = [];
     charArray.forEach((char, index) => {
       if (charLabelArray[index] === 'kanji') kanjiArray.push(char);
     });

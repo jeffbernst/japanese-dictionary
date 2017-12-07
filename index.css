@@ -1,20 +1,45 @@
 body {
   padding: 75px 0;
   font-family: 'Open Sans', sans-serif;
+  color: #444;
 }
 
 .title {
   font-family: 'Leckerli One', cursive;
   color: #444;
-  /* background: -webkit-linear-gradient(#f551cd, #860ba4);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent; */
+  font-size: 50px;
 }
 
 .smiley {
   color: #52e7d8;
   -webkit-text-stroke: 1px black;
+  font-size: 50px;
+}
+
+.input-field {
+  margin: 20px 0 0 0;
+  width: 400px;
+  height: 40px;
+  -webkit-appearance: textfield;
+  box-sizing: content-box;
+  border-radius: 5px;
+  border: 1px solid #999;
+  padding: 0 10px;
+  font-size: 20px;
+}
+
+/* .input-field:focus {
+  outline: none;
+  border: 4px dotted #f020a3;
+} */
+
+.search-button {
+  width: 100px;
+  height: 42px;
+  border-radius: 5px;
+  border: 1px solid #999;
+  font-size: 20px;
+  color: #888;
 }
 
 video {
