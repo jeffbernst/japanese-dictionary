@@ -6,41 +6,118 @@
   <meta name="viewport" content="width=device-width">
   <title>Japanese &harr; English Dictionary</title>
   <link href="index.css" rel="stylesheet" type="text/css" />
+  <link href="grid.css" rel="stylesheet" type="text/css" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Leckerli+One" rel="stylesheet">
 </head>
 
 <body>
-  <div class="container">
-    <main role='main'>
-      <section class='search-area' role='region'>
-        <div class='smiley'>ヾ(＠⌒ー⌒＠)ノ</div>
-        <div class='title'>Japanese &harr; English Dictionary</div>
-        <form action="#" class="js-search-form">
-          <input type="search" class="js-query input-field" placeholder='Enter an English word'>
-          <button type="submit" class='search-button'>Search</button>
-        </form>
-        <div class="how-to">What is this site and how do I use it? (accordian)</div>
-      </section>
-      <section class="results">
-        <div class="left-column">
+  <main role='main'>
+    <div class="row">
+      <div class="col-12">
+        <section class='search-area' role='region'>
+          <div class='smiley'>ヾ(＠⌒ー⌒＠)ノ</div>
+          <div class='title'>Japanese &harr; English Dictionary</div>
+          <form action="#" class="js-search-form">
+            <input type="search" class="js-query input-field" placeholder='Enter an English word'>
+            <button type="submit" class='search-button'>Search</button>
+          </form>
+          <!-- <div class="how-to">What is this site and how do I use it? (accordian)</div> -->
+        </section>
+      </div>
+    </div>
+    <section class="results">
+      <!-- title row -->
+      <div class="row">
+        <div class="col-3">
           <div class="word-title">
-            Word&nbsp;
-            <span class="word-smiley">*･゜ﾟ･*:.｡..｡.:*･'(*ﾟ▽ﾟ*)'･*:.｡. .｡.:*･゜ﾟ･*</span>
+            word
+            <span class="pink">/</span>
           </div>
         </div>
-        <div class="right-column">
-
+        <div class="col-5">
+          <div class="definition-title">
+            definition
+            <span class="orange">/</span>
+          </div>
         </div>
-      </section>
-      <section class='word' role='region'>
-        <span class="js-word-english word-english"></span> /
-        <span class="js-romaji romaji-color" aria-live="assertive"></span> /
-        <span class="js-word word-kanji-kana"></span>
-      </section>
-      </section>
-    </main>
-  </div>
+        <div class="col-4">
+          <div class="kanji-title">
+            kanji
+            <span class="blue">/</span>
+            in
+            <span class="pink">/</span>
+            this
+            <span class="orange">/</span>
+            word
+            <span class="blue">/</span>
+          </div>
+        </div>
+      </div>
+      <!-- results row -->
+      <div class="row">
+        <div class="col-3">
+          <div class="word-result">
+            <span class="japanese-word">試験</span> (word)
+            <br>
+            <span class="japanese-word-hiragana">しけん</span> (reading)
+            <br>
+            <span class="japanese-word-romaji">shiken</span> (romaji)
+            <br>
+          </div>
+        </div>
+        <div class="col-5">
+          <div class="definition-result">
+            <div class="definition">1. here's a sample definition</div>
+            <div class="definition">1. here's a sample definition</div>
+            <div class="definition">1. here's a sample definition</div>
+            <div class="definition">1. here's a sample definition</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="kanji-result">
+            <span class="kanji">試</span>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <!-- results row -->
+      <div class="row">
+        <div class="col-3">
+          <div class="word-result">
+            <span class="japanese-word">試験</span> (word)
+            <br>
+            <span class="japanese-word-hiragana">しけん</span> (reading)
+            <br>
+            <span class="japanese-word-romaji">shiken</span> (romaji)
+            <br>
+          </div>
+        </div>
+        <div class="col-5">
+          <div class="definition-result">
+            <div class="definition">1. here's a sample definition</div>
+            <div class="definition">1. here's a sample definition</div>
+            <div class="definition">1. here's a sample definition</div>
+            <div class="definition">1. here's a sample definition</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="kanji-result">
+            <span class="kanji">試</span>
+          </div>
+          <div class="kanji-result">
+            <span class="kanji">験</span>
+          </div>
+        </div>
+      </div>
+      <hr>
+    </section>
+    <section class='word' role='region'>
+      <span class="js-word-english word-english"></span> /
+      <span class="js-romaji romaji-color" aria-live="assertive"></span> /
+      <span class="js-word word-kanji-kana"></span>
+    </section>
+  </main>
   <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
     crossorigin="anonymous"></script>
   <script src="bundle.js"></script>

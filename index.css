@@ -1,19 +1,19 @@
 body {
-  padding: 75px 0;
   font-family: 'Open Sans', sans-serif;
   color: #444;
+}
+
+.smiley {
+  padding-top: 50px;
+  color: #52e7d8;
+  -webkit-text-stroke: 1px black;
+  font-size: 40px;
 }
 
 .title {
   font-family: 'Leckerli One', cursive;
   color: #444;
   font-size: 35px;
-}
-
-.smiley {
-  color: #52e7d8;
-  -webkit-text-stroke: 1px black;
-  font-size: 40px;
 }
 
 .input-field {
@@ -28,18 +28,13 @@ body {
   font-size: 20px;
 }
 
-/* .input-field:focus {
-  outline: none;
-  border: 4px dotted #f020a3;
-} */
-
 .search-button {
   width: 100px;
   height: 42px;
   border-radius: 5px;
   border: 1px solid #999;
   font-size: 20px;
-  color: #888;
+  color: #777;
 }
 
 .how-to {
@@ -47,13 +42,60 @@ body {
   font-size: 20px;
 }
 
-.word-title {
+.word-title,
+.definition-title,
+.kanji-title {
   font-size: 20px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+hr {
+  max-width: 1000px;
+  border-top: 1px solid #999;
 }
 
 .word-smiley {
+  font-size: 12px;
+}
+
+.word-result,
+.definition-result,
+.kanji-result {
+  margin-bottom: 20px;
+}
+
+/* .word-block {
+  border: 1px solid #999;
+  border-radius: 5px;
+} */
+
+.center-text {
+  text-align: center;
+}
+
+.japanese-word {
+  font-size: 40px;
+}
+
+.japanese-word-hiragana {
+  font-size: 30px;
+}
+
+.japanese-word-romaji {
+  font-size: 30px;
+}
+
+.word-result {
   font-size: 15px;
-  color: #888;
+}
+
+.definition {
+  font-size: 25px;
+}
+
+.kanji {
+  font-size: 80px;
 }
 
 video {
@@ -61,39 +103,14 @@ video {
 }
 
 .search-area,
-.word,
-.romaji,
-.hiragana,
-.learn-more,
-.kanji,
-.katakana {
+.word {
   text-align: center;
   margin-bottom: 50px;
 }
 
 .word,
-.learn-more,
-.romaji,
-.kanji,
-.hiragana,
-.katakana {
+.learn-more {
   display: none;
-}
-
-.kanji-color {
-  color: #52e7d8;
-}
-
-.hiragana-color {
-  color: #f020a3;
-}
-
-.katakana-color {
-  color: #ec4f19;
-}
-
-.romaji-color {
-  color: #501d50;
 }
 
 .word {
@@ -112,18 +129,14 @@ video {
   display: inline-block;
 }
 
-.kanji {
-  border: 5px solid #52e7d8;
+.blue {
+  color: #52e7d8;
 }
 
-.hiragana {
-  border: 5px solid #f020a3;
+.pink {
+  color: #ff006a;
 }
 
-.romaji {
-  border: 5px solid #501d50;
-}
-
-.katakana {
-  border: 5px solid #ec4f19;
+.orange {
+  color: #ff9100;
 }
