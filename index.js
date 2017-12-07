@@ -1,4 +1,3 @@
-const convert = require('xml-js');
 const wanakana = require('wanakana');
 
 const FADE_TIME = 600;
@@ -40,62 +39,21 @@ function clearDivs() {
   $('.js-katakana').html('');
 }
 
-function getWordFromApi(searchTerm, callback) {
-  const query = {
-    url: 'https://glosbe.com/gapi/translate',
-    dataType: 'jsonp',
-    success: callback,
-    data: {
-      from: 'eng',
-      dest: 'jpn',
-      format: 'json',
-      phrase: searchTerm,
-      pretty: 'true'
-    }
-  };
-  $.ajax(query);
-}
-
-// make section for alert! right now put it in learn more
-function displayWordSearchData(data) {
-  if (data.tuc.length === 0) {
-    $('.learn-more').text('sorry, nothing found!');
-    $('.learn-more').fadeIn(FADE_TIME);
-  } else {
-    let japaneseWord = data.tuc[0].phrase.text;
-    getWordReadingFromApi(japaneseWord, displayWordReadingData);
-    highlightCharacters(japaneseWord);
-  }
-}
-
-function getWordReadingFromApi(searchTerm, callback) {
+function jishoTest(searchTerm, callback) {
+  console.log('running');
   const query = {
     url:
-      'https://jeff-cors-anywhere-nzumhvclct.now.sh/https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
-    dataType: 'text',
+      'https://jeff-cors-anywhere-nzumhvclct.now.sh/http://beta.jisho.org/api/v1/search/words',
     success: callback,
     data: {
-      appid: 'dj00aiZpPXBFWnZSUGdRTFZJeSZzPWNvbnN1bWVyc2VjcmV0Jng9OWI-',
-      sentence: searchTerm
+      keyword: searchTerm
     }
   };
   $.ajax(query);
 }
 
-function displayWordReadingData(data) {
-  let result = convert.xml2js(data, { compact: true, ignoreDeclaration: true });
-  let wordReadingData = result.ResultSet.Result.WordList.Word;
-  let wordFurigana = '';
-  if (Array.isArray(wordReadingData)) {
-    wordFurigana = wordReadingData.reduce((accumulator, currentValue) => {
-      return accumulator.Furigana._text + currentValue.Furigana._text;
-    });
-  } else {
-    wordFurigana = wordReadingData.Furigana._text;
-  }
-  let wordRomaji = wanakana.toRomaji(wordFurigana);
-  $('.js-romaji').text(wordRomaji);
-  fadeInContent();
+function jishoDisplay(data) {
+  console.log(data);
 }
 
 function fadeInContent() {
@@ -105,35 +63,6 @@ function fadeInContent() {
   if (!$('.js-kanji').is(':empty')) $('.kanji').fadeIn(FADE_TIME);
   if (!$('.js-hiragana').is(':empty')) $('.hiragana').fadeIn(FADE_TIME);
   if (!$('.js-katakana').is(':empty')) $('.katakana').fadeIn(FADE_TIME);
-}
-
-function highlightCharacters(japaneseWord) {
-  let containsKanji = false;
-  let charArray = japaneseWord.split('');
-  let charLabelArray = charArray.map(char => {
-    if (
-      (char >= '\u4e00' && char <= '\u9faf') ||
-      (char >= '\u3400' && char <= '\u4dbf')
-    ) {
-      containsKanji = true;
-      return 'kanji';
-    } else if (char >= '\u3040' && char <= '\u309f') {
-      return 'hiragana';
-    } else if (char >= '\u30a0' && char <= '\u30ff') {
-      return 'katakana';
-    } else {
-      return false;
-    }
-  });
-  let wordWithMarkup = charLabelArray
-    .map((label, index) => {
-      return `<span class='${label}-color'>${charArray[index]}</span>`;
-    })
-    .join('');
-  $('.js-word').html(wordWithMarkup);
-  requestKanjiData(charArray, charLabelArray, containsKanji);
-  displayHiraganaInfo(charArray, charLabelArray);
-  displayKatakanaInfo(charArray, charLabelArray);
 }
 
 function requestKanjiData(charArray, charLabelArray, containsKanji) {
@@ -192,28 +121,117 @@ function displayKanjiSearchData(data) {
     .fadeIn(FADE_TIME);
 }
 
-function displayHiraganaInfo(charArray, charLabelArray) {
-  let hiraganaArray = [];
-  charArray.forEach((char, index) => {
-    if (charLabelArray[index] === 'hiragana') hiraganaArray.push(char);
-  });
-  if (hiraganaArray.length !== 0) {
-    hiraganaArray.forEach(char =>
-      $('.js-hiragana').append(`<span class='large-character'>${char}</span>`)
-    );
-  }
-}
-
-function displayKatakanaInfo(charArray, charLabelArray) {
-  let katakanaArray = [];
-  charArray.forEach((char, index) => {
-    if (charLabelArray[index] === 'katakana') katakanaArray.push(char);
-  });
-  if (katakanaArray.length !== 0) {
-    katakanaArray.forEach(char =>
-      $('.js-katakana').append(`<span class='large-character'>${char}</span>`)
-    );
-  }
-}
-
 $(startApp);
+
+//  OLD *****
+
+// function displayHiraganaInfo(charArray, charLabelArray) {
+//   let hiraganaArray = [];
+//   charArray.forEach((char, index) => {
+//     if (charLabelArray[index] === 'hiragana') hiraganaArray.push(char);
+//   });
+//   if (hiraganaArray.length !== 0) {
+//     hiraganaArray.forEach(char =>
+//       $('.js-hiragana').append(`<span class='large-character'>${char}</span>`)
+//     );
+//   }
+// }
+
+// function displayKatakanaInfo(charArray, charLabelArray) {
+//   let katakanaArray = [];
+//   charArray.forEach((char, index) => {
+//     if (charLabelArray[index] === 'katakana') katakanaArray.push(char);
+//   });
+//   if (katakanaArray.length !== 0) {
+//     katakanaArray.forEach(char =>
+//       $('.js-katakana').append(`<span class='large-character'>${char}</span>`)
+//     );
+//   }
+// }
+
+// function highlightCharacters(japaneseWord) {
+//   let containsKanji = false;
+//   let charArray = japaneseWord.split('');
+//   let charLabelArray = charArray.map(char => {
+//     if (
+//       (char >= '\u4e00' && char <= '\u9faf') ||
+//       (char >= '\u3400' && char <= '\u4dbf')
+//     ) {
+//       containsKanji = true;
+//       return 'kanji';
+//     } else if (char >= '\u3040' && char <= '\u309f') {
+//       return 'hiragana';
+//     } else if (char >= '\u30a0' && char <= '\u30ff') {
+//       return 'katakana';
+//     } else {
+//       return false;
+//     }
+//   });
+//   let wordWithMarkup = charLabelArray
+//     .map((label, index) => {
+//       return `<span class='${label}-color'>${charArray[index]}</span>`;
+//     })
+//     .join('');
+//   $('.js-word').html(wordWithMarkup);
+//   requestKanjiData(charArray, charLabelArray, containsKanji);
+//   displayHiraganaInfo(charArray, charLabelArray);
+//   displayKatakanaInfo(charArray, charLabelArray);
+// }
+
+// function getWordFromApi(searchTerm, callback) {
+//   const query = {
+//     url: 'https://glosbe.com/gapi/translate',
+//     dataType: 'jsonp',
+//     success: callback,
+//     data: {
+//       from: 'eng',
+//       dest: 'jpn',
+//       format: 'json',
+//       phrase: searchTerm,
+//       pretty: 'true'
+//     }
+//   };
+//   $.ajax(query);
+// }
+
+// make section for alert! right now put it in learn more
+// function displayWordSearchData(data) {
+//   if (data.tuc.length === 0) {
+//     $('.learn-more').text('sorry, nothing found!');
+//     $('.learn-more').fadeIn(FADE_TIME);
+//   } else {
+//     let japaneseWord = data.tuc[0].phrase.text;
+//     getWordReadingFromApi(japaneseWord, displayWordReadingData);
+//     highlightCharacters(japaneseWord);
+//   }
+// }
+
+// function getWordReadingFromApi(searchTerm, callback) {
+//   const query = {
+//     url:
+//       'https://jeff-cors-anywhere-nzumhvclct.now.sh/https://jlp.yahooapis.jp/FuriganaService/V1/furigana',
+//     dataType: 'text',
+//     success: callback,
+//     data: {
+//       appid: 'dj00aiZpPXBFWnZSUGdRTFZJeSZzPWNvbnN1bWVyc2VjcmV0Jng9OWI-',
+//       sentence: searchTerm
+//     }
+//   };
+//   $.ajax(query);
+// }
+
+// function displayWordReadingData(data) {
+//   let result = convert.xml2js(data, { compact: true, ignoreDeclaration: true });
+//   let wordReadingData = result.ResultSet.Result.WordList.Word;
+//   let wordFurigana = '';
+//   if (Array.isArray(wordReadingData)) {
+//     wordFurigana = wordReadingData.reduce((accumulator, currentValue) => {
+//       return accumulator.Furigana._text + currentValue.Furigana._text;
+//     });
+//   } else {
+//     wordFurigana = wordReadingData.Furigana._text;
+//   }
+//   let wordRomaji = wanakana.toRomaji(wordFurigana);
+//   $('.js-romaji').text(wordRomaji);
+//   fadeInContent();
+// }
