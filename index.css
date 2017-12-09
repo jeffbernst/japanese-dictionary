@@ -37,9 +37,8 @@ body {
   color: #777;
 }
 
-.how-to {
-  margin-top: 20px;
-  font-size: 20px;
+.results {
+  display: none;
 }
 
 .word-title,
@@ -53,6 +52,18 @@ body {
 hr {
   max-width: 1000px;
   border-top: 1px solid #999;
+}
+
+.blue-hr {
+  border-top: 1px solid #52e7d8;
+}
+
+.orange-hr {
+  border-top: 1px solid #ff9100;
+}
+
+.pink-hr {
+  border-top: 1px solid #ff006a;
 }
 
 .word-smiley {
