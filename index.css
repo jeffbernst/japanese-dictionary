@@ -76,7 +76,7 @@ hr {
 }
 
 .kanji-result {
-  margin-top: -15px;
+  margin-top: 0;
 }
 
 .kanji-group {
@@ -128,7 +128,8 @@ hr {
 }
 
 video {
-  border: 1px solid black;
+  width: 100px;
+  height: 100px;
 }
 
 .search-area,

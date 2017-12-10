@@ -43,36 +43,78 @@ function processWordData(wordArray) {
   let wordsToDisplay = [];
   if (wordArray.length <= 5) {
     wordsToDisplay = currentWordArray;
-    let kanjiArray = wordsToDisplay.map((word, index) => {
-      return identifyKanji(word);
-    });
-    let kanjiArrayWithLocation = addKanjiLocation(kanjiArray);
-    console.log(kanjiArrayWithLocation);
-    let kanjiPromiseArray = kanjiArrayWithLocation.map(kanjiObj =>
-      getKanjiInfoFromApi(kanjiObj.kanji)
-    );
-    Promise.all(kanjiPromiseArray).then((...args) => {
-      console.log(args);
-      for (let i = 0; i < args.length; i++) {
-        const kanjiData = args[i];
-        const location = kanjiArrayWithLocation[i];
-      }
-    });
-    // pull in kanji api data with indexes
-    let kanjiInfo = 'data from apis';
-    // pass them to display function so it can display info
-    displayWordData(wordsToDisplay, kanjiInfo);
+    processKanjiApiCall(wordsToDisplay);
   } else {
     wordsToDisplay = currentWordArray.splice(0, 5);
-
-    let kanjiInfo = 'data from apis';
-    displayWordData(wordsToDisplay, kanjiInfo);
+    processKanjiApiCall(wordsToDisplay);
     // execute listener to load more results on scroll down
+    // actually i only want to activate this one time
     // pageScrollListener(currentWordArray)
   }
 }
 
+function processKanjiApiCall(wordsToDisplay) {
+  let kanjiArray = wordsToDisplay.map((word, index) => {
+    return identifyKanji(word);
+  });
+  let kanjiArrayWithLocation = addKanjiLocation(kanjiArray);
+  let kanjiPromiseArray = kanjiArrayWithLocation.map(kanjiObj =>
+    getKanjiInfoFromApi(kanjiObj.kanji)
+  );
+  Promise.all(kanjiPromiseArray).then((...args) => {
+    let kanjiDataFromApi = args;
+    let kanjiCounter = -1;
+    let kanjiGroupStringArray = kanjiArray.map(kanjiInWord => {
+      return kanjiInWord.reduce(accumulator => {
+        kanjiCounter++;
+        if (typeof kanjiDataFromApi[0][kanjiCounter] === 'undefined') {
+          return accumulator + 'no kanji in this word';
+        } else if ('error' in kanjiDataFromApi[0][kanjiCounter]) {
+          return accumulator + 'kanji not in database';
+        } else {
+          console.log(kanjiDataFromApi[0][kanjiCounter]);
+          return (
+            accumulator + processKanjiData(kanjiDataFromApi[0][kanjiCounter])
+          );
+        }
+      }, '');
+    });
+    displayWordData(wordsToDisplay, kanjiGroupStringArray);
+  });
+}
+
+function processKanjiData(data) {
+  let kanjiData = data;
+  // let kanjiData = JSON.parse(data.responseText);
+  // if (typeof kanjiData.kanji === 'undefined') return '';
+  let kanjiChar = kanjiData.kanji.character;
+  let kanjiVid = kanjiData.kanji.video.mp4;
+  let kanjiVidPoster = kanjiData.kanji.video.poster;
+  let kanjiMeaning = kanjiData.kanji.meaning.english;
+  let kanjiStrokes = kanjiData.kanji.strokes.count;
+  let kanjiGrade = kanjiData.references.grade;
+  if (kanjiGrade === null) kanjiGrade = 'not listed';
+  let kanjiGroup = `
+      <div class="kanji-group">
+        <div class="kanji-col-left">
+          <div class="kanji-result">
+            <video width="320" height="240" controls poster="${kanjiVidPoster}">
+              <source src="${kanjiVid}" type="video/mp4">
+              Your browser does not support the video tag.</video>
+          </div>
+        </div>
+        <div class="kanji-col-right">
+          meaning: ${kanjiMeaning}
+          <br>strokes: ${kanjiStrokes}
+          <br>grade: ${kanjiGrade}
+        </div>
+      </div>
+    `;
+  return kanjiGroup;
+}
+
 function identifyKanji(word) {
+  // if word data doesn't have 'word' field then word contains no kanji
   if (typeof word.japanese[0].word === 'undefined') return [''];
   let wordCharacters = word.japanese[0].word.split('');
   let kanjiInWord = wordCharacters.filter((char, index) => {
@@ -99,15 +141,22 @@ function addKanjiLocation(kanjiArray) {
   return kanjiArrayWithLocation;
 }
 
-function displayWordData(wordArray, kanjiInfo) {
-  wordArray.forEach((word, index) => {
-    let japaneseWord = word.japanese[0].word;
-    let wordReading = word.japanese[0].reading;
+function displayWordData(wordArray, kanjiGroupStringArray) {
+  let wordAndKanjiData = wordArray.map((wordData, index) => {
+    return {
+      word: wordData,
+      kanji: kanjiGroupStringArray[index]
+    };
+  });
+  console.log(wordAndKanjiData);
+  wordAndKanjiData.forEach((group, index) => {
+    let japaneseWord = group.word.japanese[0].word;
+    let wordReading = group.word.japanese[0].reading;
     let wordRomaji = wanakana.toRomaji(wordReading);
-    let wordDefinitions = word.senses.map((definition, index) => {
+    let kanjiSection = group.kanji;
+    let wordDefinitions = group.word.senses.map((definition, index) => {
       return definition.english_definitions.join(', ');
     });
-
     let wordResultSection = '';
     if (typeof japaneseWord === 'undefined') {
       wordResultSection = `
@@ -124,7 +173,6 @@ function displayWordData(wordArray, kanjiInfo) {
         return `<div class="definition">${index + 1}. ${definition}</div>`;
       })
       .join('');
-    let kanjiSection = '';
     let $resultDiv = $(`
       <div class="row">
         <div class="col-3">
@@ -152,8 +200,10 @@ function displayWordData(wordArray, kanjiInfo) {
 
 function pageScrollListener(wordArray) {
   // set this infinite scroll listener up
-  $('place to look').submit(event => {
-    processWordData(wordArray);
+  $(window).scroll(function() {
+    if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+      // ajax call get data from server and append to the div
+    }
   });
 }
 
@@ -175,35 +225,6 @@ function getKanjiInfoFromApi(searchTerm) {
     };
     $.ajax(query);
   });
-}
-
-function processKanjiData(data) {
-  let kanjiData = JSON.parse(data.responseText);
-  if (typeof kanjiData.kanji === 'undefined') return '';
-  let kanjiChar = kanjiData.kanji.character;
-  let kanjiVid = kanjiData.kanji.video.mp4;
-  let kanjiVidPoster = kanjiData.kanji.video.poster;
-  let kanjiMeaning = kanjiData.kanji.meaning.english;
-  let kanjiStrokes = kanjiData.kanji.strokes.count;
-  let kanjiGrade = kanjiData.references.grade;
-  if (kanjiGrade === null) kanjiGrade = 'not listed';
-  let kanjiGroup = `
-      <div class="kanji-group">
-        <div class="kanji-col-left">
-          <div class="kanji-result">
-            <video width="320" height="240" controls poster="${kanjiVidPoster}">
-              <source src="${kanjiVid}" type="video/mp4">
-              Your browser does not support the video tag.</video>
-          </div>
-        </div>
-        <div class="kanji-col-right">
-          meaning: ${kanjiMeaning}
-          <br>strokes: ${kanjiStrokes}
-          <br>grade: ${kanjiGrade}
-        </div>
-      </div>
-    `;
-  return { index, kanjiGroup };
 }
 
 $(startApp);
