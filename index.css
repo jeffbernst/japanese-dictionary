@@ -16,9 +16,12 @@ body {
   font-size: 35px;
 }
 
+.search-form {
+  padding: 20px 0 0 0;
+}
+
 .input-field {
-  margin: 20px 0 0 0;
-  width: 400px;
+  width: 330px;
   height: 40px;
   -webkit-appearance: textfield;
   box-sizing: content-box;
@@ -26,6 +29,7 @@ body {
   border: 1px solid #999;
   padding: 0 10px;
   font-size: 20px;
+  vertical-align: top;
 }
 
 .search-button {
@@ -35,6 +39,17 @@ body {
   border: 1px solid #999;
   font-size: 20px;
   color: #777;
+  vertical-align: top;
+}
+
+.toggle-button {
+  width: 70px;
+  height: 42px;
+  border-radius: 5px;
+  border: 1px solid #999;
+  font-size: 20px;
+  color: #777;
+  vertical-align: top;
 }
 
 .results {
@@ -83,6 +98,7 @@ hr {
   width: 100%;
   display: flex;
   justify-content: flex-start;
+  margin-bottom: 15px;
 }
 
 .kanji-col-left {
@@ -92,6 +108,10 @@ hr {
 
 .kanji-col-right {
   display: inline-block;
+}
+
+.no-kanji-message {
+  margin-bottom: 15px;
 }
 
 /* .word-block {
@@ -121,10 +141,24 @@ hr {
 
 .definition {
   font-size: 25px;
+  margin-bottom: 10px;
+}
+
+.definition-index {
+  font-size: 17px;
 }
 
 .kanji {
   font-size: 80px;
+}
+
+.kanji-info {
+  font-size: 20px;
+  line-height: 30px;
+}
+
+.kanji-info-label {
+  font-size: 15px;
 }
 
 video {

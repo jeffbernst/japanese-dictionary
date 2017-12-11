@@ -4,20 +4,31 @@ const FADE_TIME = 600;
 
 function startApp() {
   watchSubmit();
+  watchToggle();
 }
 
 function watchSubmit() {
   $('.js-search-form').submit(event => {
     event.preventDefault();
     $('.js-results').html('');
-    let englishWord = $(event.currentTarget)
+    let searchTerm = $(event.currentTarget)
       .find('.js-query')
       .val();
-    getWordFromApi(englishWord, processDataFromWordApi);
+    let toggle = $('.js-toggle-button').text();
+    if (toggle === 'E \u2192 J') searchTerm = `"${searchTerm}"`;
+    getWordFromApi(searchTerm, processDataFromWordApi);
     // highlight word instead of clearing it on search?
     $(event.currentTarget)
       .find('.js-query')
       .val('');
+  });
+}
+
+function watchToggle() {
+  $('.js-toggle-button').click(event => {
+    $(event.currentTarget).text((index, text) => {
+      return text === 'E \u2192 J' ? 'J \u2192 E' : 'E \u2192 J';
+    });
   });
 }
 
@@ -57,27 +68,29 @@ function processKanjiApiCall(wordsToDisplay) {
   let kanjiArray = wordsToDisplay.map((word, index) => {
     return identifyKanji(word);
   });
-  console.log(kanjiArray);
-  let kanjiArrayWithLocation = addKanjiLocation(kanjiArray);
-  let kanjiPromiseArray = kanjiArrayWithLocation.map(kanjiObj =>
-    getKanjiInfoFromApi(kanjiObj.kanji)
-  );
+  let kanjiPromiseArray = kanjiArray.map(kanjiInWord => {
+    return Promise.all(kanjiInWord.map(kanji => getKanjiInfoFromApi(kanji)));
+  });
   Promise.all(kanjiPromiseArray).then(args => {
-    console.log(args);
     let kanjiDataFromApi = args;
-    let kanjiCounter = -1;
-    let kanjiGroupStringArray = kanjiArray.map(kanjiInWord => {
-      return kanjiInWord.reduce(accumulator => {
-        kanjiCounter++;
-        if (typeof kanjiDataFromApi[kanjiCounter] === 'undefined') {
-          return accumulator + 'no kanji in this word';
-        } else if ('error' in kanjiDataFromApi[kanjiCounter]) {
-          return accumulator + 'kanji not in database';
-        } else {
-          return accumulator + processKanjiData(kanjiDataFromApi[kanjiCounter]);
-        }
-      }, '');
-    });
+    let kanjiGroupStringArray = kanjiDataFromApi.map(
+      (kanjiInWord, wordIndex) => {
+        return kanjiInWord.reduce((accumulator, kanjiData, kanjiIndex) => {
+          if (typeof kanjiData === 'undefined') {
+            return accumulator + '';
+          } else if ('error' in kanjiData) {
+            return (
+              accumulator +
+              `<div class='no-kanji-message'>Sorry! The kanji ${
+                kanjiArray[wordIndex][kanjiIndex]
+              } isn't in our database.</div>`
+            );
+          } else {
+            return accumulator + processKanjiData(kanjiData);
+          }
+        }, '');
+      }
+    );
     displayWordData(wordsToDisplay, kanjiGroupStringArray);
   });
 }
@@ -103,9 +116,8 @@ function processKanjiData(data) {
           </div>
         </div>
         <div class="kanji-col-right">
-          meaning: ${kanjiMeaning}
-          <br>strokes: ${kanjiStrokes}
-          <br>grade: ${kanjiGrade}
+          ${kanjiMeaning}<br>
+          <span class='kanji-info-label'>(${kanjiStrokes} strokes)</span>
         </div>
       </div>
     `;
@@ -125,21 +137,21 @@ function identifyKanji(word) {
   return kanjiInWord;
 }
 
-//remove this
-function addKanjiLocation(kanjiArray) {
-  let kanjiArrayWithLocation = [];
-  let kanjiCounter = 0;
-  kanjiArray.forEach((kanjiInWord, wordIndex) => {
-    kanjiInWord.forEach((kanji, kanjiIndex) => {
-      kanjiArrayWithLocation[kanjiCounter] = {
-        kanji: kanji,
-        location: [wordIndex, kanjiIndex]
-      };
-      kanjiCounter++;
-    });
-  });
-  return kanjiArrayWithLocation;
-}
+// //remove this
+// function addKanjiLocation(kanjiArray) {
+//   let kanjiArrayWithLocation = [];
+//   let kanjiCounter = 0;
+//   kanjiArray.forEach((kanjiInWord, wordIndex) => {
+//     kanjiInWord.forEach((kanji, kanjiIndex) => {
+//       kanjiArrayWithLocation[kanjiCounter] = {
+//         kanji: kanji,
+//         location: [wordIndex, kanjiIndex]
+//       };
+//       kanjiCounter++;
+//     });
+//   });
+//   return kanjiArrayWithLocation;
+// }
 
 function displayWordData(wordArray, kanjiGroupStringArray) {
   let wordAndKanjiData = wordArray.map((wordData, index) => {
@@ -169,7 +181,8 @@ function displayWordData(wordArray, kanjiGroupStringArray) {
     }
     let definitionSection = wordDefinitions
       .map((definition, index) => {
-        return `<div class="definition">${index + 1}. ${definition}</div>`;
+        return `<div class="definition"><span class='definition-index'>
+          ${index + 1})</span> ${definition}</span></div>`;
       })
       .join('');
     let $resultDiv = $(`
@@ -185,8 +198,10 @@ function displayWordData(wordArray, kanjiGroupStringArray) {
           </div>
         </div>
         <div class="col-4">
-          ${kanjiSection}
-        </div>
+          <div class="kanji-info">
+            ${kanjiSection}
+          </div>
+          </div>
       </div>
       <hr>
     `);
