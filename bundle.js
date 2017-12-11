@@ -58,25 +58,24 @@ function processKanjiApiCall(wordsToDisplay) {
   let kanjiArray = wordsToDisplay.map((word, index) => {
     return identifyKanji(word);
   });
+  console.log(kanjiArray);
   let kanjiArrayWithLocation = addKanjiLocation(kanjiArray);
   let kanjiPromiseArray = kanjiArrayWithLocation.map(kanjiObj =>
     getKanjiInfoFromApi(kanjiObj.kanji)
   );
-  Promise.all(kanjiPromiseArray).then((...args) => {
+  Promise.all(kanjiPromiseArray).then(args => {
+    console.log(args);
     let kanjiDataFromApi = args;
     let kanjiCounter = -1;
     let kanjiGroupStringArray = kanjiArray.map(kanjiInWord => {
       return kanjiInWord.reduce(accumulator => {
         kanjiCounter++;
-        if (typeof kanjiDataFromApi[0][kanjiCounter] === 'undefined') {
+        if (typeof kanjiDataFromApi[kanjiCounter] === 'undefined') {
           return accumulator + 'no kanji in this word';
-        } else if ('error' in kanjiDataFromApi[0][kanjiCounter]) {
+        } else if ('error' in kanjiDataFromApi[kanjiCounter]) {
           return accumulator + 'kanji not in database';
         } else {
-          console.log(kanjiDataFromApi[0][kanjiCounter]);
-          return (
-            accumulator + processKanjiData(kanjiDataFromApi[0][kanjiCounter])
-          );
+          return accumulator + processKanjiData(kanjiDataFromApi[kanjiCounter]);
         }
       }, '');
     });
@@ -127,6 +126,7 @@ function identifyKanji(word) {
   return kanjiInWord;
 }
 
+//remove this
 function addKanjiLocation(kanjiArray) {
   let kanjiArrayWithLocation = [];
   let kanjiCounter = 0;
@@ -149,7 +149,6 @@ function displayWordData(wordArray, kanjiGroupStringArray) {
       kanji: kanjiGroupStringArray[index]
     };
   });
-  console.log(wordAndKanjiData);
   wordAndKanjiData.forEach((group, index) => {
     let japaneseWord = group.word.japanese[0].word;
     let wordReading = group.word.japanese[0].reading;
