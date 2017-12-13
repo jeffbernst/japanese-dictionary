@@ -1,0 +1,128 @@
+.row {
+  max-width: 1000px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 0 auto;
+}
+
+/* Clearfix */
+.row::before,
+.row::after {
+  display: table;
+  content: '';
+}
+
+.row::after {
+  clear: both;
+}
+
+/* Mobile defaults */
+.col-4 {
+  width: 60%;
+  float: right;
+  padding-left: 1.04166666%;
+  padding-right: 1.04166666%;
+}
+
+.col-3,
+.col-5,
+.col-title {
+  float: left;
+  padding-left: 1.04166666%;
+  padding-right: 1.04166666%;
+}
+
+.col-3 {
+  width: 40%;
+}
+
+.col-5 {
+  width: 60%;
+}
+
+.col-title {
+  width: 100%;
+}
+
+@media only screen and (min-width: 900px) {
+  .word-label {
+    display: inline;
+  }
+  .results-count {
+    display: inline;
+  }
+}
+
+/* Non-mobile, grid */
+@media only screen and (min-width: 640px) {
+  .col-3,
+  .col-title {
+    width: 25%;
+  }
+  .col-4 {
+    width: 33.3%;
+  }
+  .col-5 {
+    width: 41.6%;
+  }
+  .definition-title {
+    display: inline;
+  }
+  .kanji-title {
+    display: inline;
+  }
+  .input-field {
+    width: 330px;
+    height: 40px;
+    font-size: 20px;
+    padding: 0 10px;
+  }
+  .search-button {
+    width: 100px;
+    font-size: 20px;
+    height: 42px;
+  }
+  .toggle-button {
+    width: 70px;
+    font-size: 20px;
+    height: 42px;
+  }
+  .title {
+    font-size: 35px;
+  }
+  .smiley {
+    font-size: 40px;
+  }
+  .japanese-word {
+    font-size: 40px;
+  }
+  .japanese-word-hiragana {
+    font-size: 30px;
+  }
+  .japanese-word-romaji {
+    font-size: 30px;
+  }
+  .definition {
+    font-size: 25px;
+    margin-bottom: 10px;
+  }
+  .definition-index {
+    font-size: 17px;
+  }
+  video {
+    width: 100px;
+    height: 100px;
+  }
+  .loading-animation {
+    font-size: 25px;
+  }
+  .kanji-col-right {
+    display: inline-block;
+  }
+  .kanji-info {
+    font-size: 20px;
+  }
+  .results-count {
+    display: none;
+  }
+}

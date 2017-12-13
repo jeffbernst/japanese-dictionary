@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: 'Open Sans', sans-serif;
   color: #444;
@@ -7,13 +11,13 @@ body {
   padding-top: 50px;
   color: #52e7d8;
   -webkit-text-stroke: 1px black;
-  font-size: 40px;
+  font-size: 7vw;
 }
 
 .title {
   font-family: 'Leckerli One', cursive;
   color: #444;
-  font-size: 35px;
+  font-size: 5.5vw;
 }
 
 .search-form {
@@ -21,23 +25,22 @@ body {
 }
 
 .input-field {
-  width: 330px;
-  height: 40px;
-  -webkit-appearance: textfield;
+  width: 50%;
+  height: 30px;
   box-sizing: content-box;
   border-radius: 5px;
   border: 1px solid #999;
-  padding: 0 10px;
-  font-size: 20px;
+  padding: 0 5px;
+  font-size: 4vw;
   vertical-align: top;
 }
 
 .search-button {
-  width: 100px;
-  height: 42px;
+  width: 20%;
+  height: 32px;
   border-radius: 5px;
   border: 1px solid #999;
-  font-size: 20px;
+  font-size: 4vw;
   color: #777;
   vertical-align: top;
 }
@@ -47,11 +50,11 @@ body {
 }
 
 .toggle-button {
-  width: 70px;
-  height: 42px;
+  width: 20%;
+  height: 32px;
   border-radius: 5px;
   border: 1px solid #999;
-  font-size: 20px;
+  font-size: 4vw;
   color: #777;
   vertical-align: top;
 }
@@ -72,25 +75,26 @@ body {
   margin-bottom: 20px;
 }
 
+.definition-title,
+.kanji-title {
+  display: none;
+}
+
+.results-count {
+  font-size: 15px;
+}
+
 hr {
   max-width: 1000px;
   border-top: 1px solid #999;
 }
 
-.blue-hr {
-  border-top: 1px solid #52e7d8;
-}
-
-.orange-hr {
-  border-top: 1px solid #ff9100;
-}
-
-.pink-hr {
-  border-top: 1px solid #ff006a;
-}
-
 .word-smiley {
   font-size: 12px;
+}
+
+.word-label {
+  display: none;
 }
 
 .word-result,
@@ -122,25 +126,20 @@ hr {
   margin-bottom: 15px;
 }
 
-/* .word-block {
-  border: 1px solid #999;
-  border-radius: 5px;
-} */
-
 .center-text {
   text-align: center;
 }
 
 .japanese-word {
-  font-size: 40px;
+  font-size: 6vw;
 }
 
 .japanese-word-hiragana {
-  font-size: 30px;
+  font-size: 5vw;
 }
 
 .japanese-word-romaji {
-  font-size: 30px;
+  font-size: 5vw;
 }
 
 .word-result {
@@ -148,12 +147,12 @@ hr {
 }
 
 .definition {
-  font-size: 25px;
+  font-size: 5vw;
   margin-bottom: 10px;
 }
 
 .definition-index {
-  font-size: 17px;
+  font-size: 5vw;
 }
 
 .kanji {
@@ -161,7 +160,7 @@ hr {
 }
 
 .kanji-info {
-  font-size: 20px;
+  font-size: 5vw;
   line-height: 30px;
 }
 
@@ -170,8 +169,8 @@ hr {
 }
 
 video {
-  width: 100px;
-  height: 100px;
+  width: 75px;
+  height: 75px;
 }
 
 .search-area,
@@ -213,10 +212,10 @@ video {
   color: #ff9100;
 }
 
-/* LOADING ANIMATION */
+/* ~~~~~~~ LOADING ANIMATION ~~~~~~~ */
 
 .loading-animation {
-  font-size: 25px;
+  font-size: 20px;
   font-weight: bold;
   text-align: center;
   margin: 20px 0;
@@ -248,34 +247,3 @@ video {
   animation: loading 1.6s ease-in-out infinite;
   animation-delay: 0.8s;
 }
-
-/* .loading-animation span:nth-child(1) {
-  animation-delay: 0.5s;
-}
-
-.loading-animation span:nth-child(2) {
-  animation-delay: 1s;
-}
-
-.loading-animation span:nth-child(3) {
-  animation-delay: 1.5s;
-} */
-
-/* .loading-animation span:nth-child(1) {
-  animation: loading 0.9s linear;
-}
-.loading-animation span:nth-child(2) {
-  animation: loading 0.9s linear 0.5s;
-}
-.loading-animation span:nth-child(3) {
-  animation: loading 0.9s linear 1s;
-}
-.loading-animation span:nth-child(4) {
-  animation: loading 0.9s linear 1.5s;
-}
-.loading-animation span:nth-child(5) {
-  animation: loading 0.9s linear 2s;
-}
-.loading-animation span:nth-child(6) {
-  animation: loading 0.9s linear 2.5s;
-} */

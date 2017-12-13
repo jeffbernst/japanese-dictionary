@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify index.js -vo bundle.js",
+    "dev": "watchify index.js -vo bundle.js"
   },
   "repository": {
     "type": "git",
@@ -16,8 +18,10 @@
     "url": "https://github.com/jeffbernst/api-capstone/issues"
   },
   "homepage": "https://github.com/jeffbernst/api-capstone#readme",
-  "dependencies": {
-    "wanakana": "^2.3.1"
-  },
-  "devDependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^14.5.0",
+    "wanakana": "^2.3.3",
+    "watchify": "^3.9.0"
+  }
 }
