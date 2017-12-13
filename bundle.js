@@ -11,6 +11,8 @@ function startApp() {
 function watchSubmit() {
   $('.js-search-form').submit(event => {
     event.preventDefault();
+    $('.loading-animation').show();
+    $('.results').hide();
     $('.js-results').html('');
     let searchTerm = $(event.currentTarget)
       .find('.js-query')
@@ -46,7 +48,6 @@ function getWordFromApi(searchTerm, callback) {
 }
 
 function processDataFromWordApi(data) {
-  $('.results').fadeIn(FADE_TIME);
   processWordData(data.data);
 }
 
@@ -155,6 +156,8 @@ function identifyKanji(word) {
 // }
 
 function displayWordData(wordArray, kanjiGroupStringArray) {
+  $('.loading-animation').hide();
+  $('.results').fadeIn(FADE_TIME);
   let wordAndKanjiData = wordArray.map((wordData, index) => {
     return {
       word: wordData,
