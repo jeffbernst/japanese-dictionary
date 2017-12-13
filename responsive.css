@@ -25,6 +25,7 @@
 
 .col-3,
 .col-5,
+.col-12,
 .col-title {
   float: left;
   padding-left: 1.04166666%;
@@ -37,6 +38,10 @@
 
 .col-5 {
   width: 60%;
+}
+
+.col-12 {
+  width: 100%;
 }
 
 .col-title {

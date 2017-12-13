@@ -47,15 +47,24 @@ function getWordFromApi(searchTerm, callback) {
 }
 
 function processDataFromWordApi(data) {
+  console.log(data);
+  if (data.data.length === 0)
+    $('.js-results').html(
+      `<div class="row">
+        <div class='col-12'>
+          Sorry! Your search didn't return any results.
+        </div>
+      </div>`
+    );
   $('.results-count').text(`(${data.data.length})`);
   processWordData(data.data);
 }
 
 function processWordData(wordArray) {
-  let currentWordArray = wordArray;
+  let currentWordArray = wordArray.slice();
   let wordsToDisplay = [];
-  if (wordArray.length <= 5) {
-    wordsToDisplay = currentWordArray;
+  if (currentWordArray.length <= 5) {
+    wordsToDisplay = currentWordArray.slice();
     processKanjiApiCall(wordsToDisplay);
   } else {
     wordsToDisplay = currentWordArray.splice(0, 5);
@@ -199,8 +208,10 @@ function displayWordData(wordArray, kanjiGroupStringArray) {
 function pageScrollListener(wordArray) {
   $(window).scroll(function() {
     if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+      console.log(wordArray);
       $('.loading-animation').show();
       processWordData(wordArray);
+      $(window).off('scroll');
     }
   });
 }
