@@ -19,7 +19,6 @@ function watchSubmit() {
     let toggle = $('.js-toggle-button').text();
     if (toggle === 'E \u2192 J') searchTerm = `"${searchTerm}"`;
     getWordFromApi(searchTerm, processDataFromWordApi);
-    // highlight word instead of clearing it on search?
     $(event.currentTarget)
       .find('.js-query')
       .val('');
@@ -61,9 +60,6 @@ function processWordData(wordArray) {
     wordsToDisplay = currentWordArray.splice(0, 5);
     processKanjiApiCall(wordsToDisplay);
     pageScrollListener(currentWordArray);
-    // execute listener to load more results on scroll down
-    // actually i only want to activate this one time
-    // pageScrollListener(currentWordArray)
   }
 }
 

@@ -7,6 +7,13 @@ body {
   color: #444;
 }
 
+/* ~~~~~~~~~~~~ SEARCH AREA ~~~~~~~~~~~~ */
+
+.search-area {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
 .smiley {
   padding-top: 50px;
   color: #52e7d8;
@@ -63,6 +70,8 @@ body {
   background-color: #f2f2f2;
 }
 
+/* ~~~~~~~~~~~~ RESULTS ~~~~~~~~~~~~ */
+
 .results {
   display: none;
 }
@@ -70,7 +79,7 @@ body {
 .word-title,
 .definition-title,
 .kanji-title {
-  font-size: 22px;
+  font-size: 18px;
   text-transform: uppercase;
   margin-bottom: 20px;
 }
@@ -87,10 +96,6 @@ body {
 hr {
   max-width: 1000px;
   border-top: 1px solid #999;
-}
-
-.word-smiley {
-  font-size: 12px;
 }
 
 .word-label {
@@ -126,10 +131,6 @@ hr {
   margin-bottom: 15px;
 }
 
-.center-text {
-  text-align: center;
-}
-
 .japanese-word {
   font-size: 6vw;
 }
@@ -155,10 +156,6 @@ hr {
   font-size: 5vw;
 }
 
-.kanji {
-  font-size: 80px;
-}
-
 .kanji-info {
   font-size: 5vw;
   line-height: 30px;
@@ -169,35 +166,8 @@ hr {
 }
 
 video {
-  width: 75px;
-  height: 75px;
-}
-
-.search-area,
-.word {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.word,
-.learn-more {
-  display: none;
-}
-
-.word {
-  font-size: 50px;
-}
-
-.large-font {
-  font-size: 40px;
-}
-
-.large-character {
-  font-size: 70px;
-}
-
-.inline-block {
-  display: inline-block;
+  width: 65px;
+  height: 65px;
 }
 
 .blue {
@@ -212,7 +182,7 @@ video {
   color: #ff9100;
 }
 
-/* ~~~~~~~ LOADING ANIMATION ~~~~~~~ */
+/* ~~~~~~~~~~~~ LOADING ANIMATION ~~~~~~~~~~~~ */
 
 .loading-animation {
   font-size: 20px;
