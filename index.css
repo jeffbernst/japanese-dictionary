@@ -42,6 +42,11 @@ body {
   vertical-align: top;
 }
 
+.search-button:active {
+  background-color: #999;
+  color: white;
+}
+
 .toggle-button {
   width: 70px;
   height: 42px;
@@ -50,6 +55,11 @@ body {
   font-size: 20px;
   color: #777;
   vertical-align: top;
+}
+
+.toggle-button:active {
+  background-color: #999;
+  color: white;
 }
 
 .results {
