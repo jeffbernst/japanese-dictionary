@@ -1,3 +1,5 @@
+@import url(//fonts.googleapis.com/earlyaccess/notosanskannada.css);
+
 * {
   box-sizing: border-box;
 }
@@ -15,6 +17,7 @@ body {
 }
 
 .smiley {
+  font-family: 'Noto Sans Kannada', sans-serif;
   padding-top: 50px;
   color: #52e7d8;
   -webkit-text-stroke: 1px black;
@@ -37,6 +40,7 @@ body {
   box-sizing: content-box;
   border-radius: 5px;
   border: 1px solid #999;
+  color: #444;
   padding: 0 5px;
   font-size: 4vw;
   vertical-align: top;
@@ -48,7 +52,7 @@ body {
   border-radius: 5px;
   border: 1px solid #999;
   font-size: 4vw;
-  color: #777;
+  color: #444;
   vertical-align: top;
 }
 
@@ -62,7 +66,7 @@ body {
   border-radius: 5px;
   border: 1px solid #999;
   font-size: 4vw;
-  color: #777;
+  color: #444;
   vertical-align: top;
 }
 
@@ -141,6 +145,7 @@ hr {
 
 .japanese-word-romaji {
   font-size: 5vw;
+  overflow-wrap: break-word;
 }
 
 .word-result {

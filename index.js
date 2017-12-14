@@ -47,16 +47,16 @@ function getWordFromApi(searchTerm, callback) {
 
 function processDataFromWordApi(data) {
   console.log(data);
-  if (data.data.length === 0)
-    $('.js-results').html(
-      `<div class="row">
+  $('.results-count').text(`(${data.data.length})`);
+  if (data.data.length === 0) {
+    $('.js-results').html(`<div class="row">
         <div class='col-12'>
           Sorry! Your search didn't return any results.
         </div>
-      </div>`
-    );
-  $('.results-count').text(`(${data.data.length})`);
-  processWordData(data.data);
+      </div>`);
+  } else {
+    processWordData(data.data);
+  }
 }
 
 function processWordData(wordArray) {
@@ -64,15 +64,18 @@ function processWordData(wordArray) {
   let wordsToDisplay = [];
   if (currentWordArray.length <= 5) {
     wordsToDisplay = currentWordArray.slice();
-    processKanjiApiCall(wordsToDisplay);
+    processKanjiApiCall(wordsToDisplay, false, currentWordArray);
   } else {
     wordsToDisplay = currentWordArray.splice(0, 5);
-    processKanjiApiCall(wordsToDisplay);
-    pageScrollListener(currentWordArray);
+    processKanjiApiCall(wordsToDisplay, true, currentWordArray);
   }
 }
 
-function processKanjiApiCall(wordsToDisplay) {
+function processKanjiApiCall(
+  wordsToDisplay,
+  scrollListenerActive,
+  wordsRemainingToDisplay
+) {
   let kanjiArray = wordsToDisplay.map((word, index) => {
     return identifyKanji(word);
   });
@@ -99,7 +102,12 @@ function processKanjiApiCall(wordsToDisplay) {
         }, '');
       }
     );
-    displayWordData(wordsToDisplay, kanjiGroupStringArray);
+    displayWordData(
+      wordsToDisplay,
+      kanjiGroupStringArray,
+      scrollListenerActive,
+      wordsRemainingToDisplay
+    );
   });
 }
 
@@ -143,7 +151,12 @@ function identifyKanji(word) {
   return kanjiInWord;
 }
 
-function displayWordData(wordArray, kanjiGroupStringArray) {
+function displayWordData(
+  wordArray,
+  kanjiGroupStringArray,
+  scrollListenerActive,
+  wordsRemainingToDisplay
+) {
   $('.loading-animation').hide();
   $('.results').fadeIn(FADE_TIME);
   let wordAndKanjiData = wordArray.map((wordData, index) => {
@@ -202,15 +215,17 @@ function displayWordData(wordArray, kanjiGroupStringArray) {
       .appendTo('.js-results')
       .fadeIn(FADE_TIME);
   });
+  if (scrollListenerActive) pageScrollListener(wordsRemainingToDisplay);
 }
 
 function pageScrollListener(wordArray) {
-  $(window).scroll(function() {
+  console.count('registering listener');
+  $(window).on('scroll', function() {
     if ($(window).scrollTop() == $(document).height() - $(window).height()) {
       console.log(wordArray);
       $('.loading-animation').show();
-      processWordData(wordArray);
       $(window).off('scroll');
+      processWordData(wordArray);
     }
   });
 }
