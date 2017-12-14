@@ -17,9 +17,11 @@ function watchSubmit() {
     let searchTerm = $(event.currentTarget)
       .find('.js-query')
       .val();
+    let searchTermLowercase = searchTerm.toLowerCase();
     let toggle = $('.js-toggle-button').text();
-    if (toggle === 'E \u2192 J') searchTerm = `"${searchTerm}"`;
-    getWordFromApi(searchTerm, processDataFromWordApi);
+    if (toggle === 'E \u2192 J')
+      searchTermLowercase = `"${searchTermLowercase}"`;
+    getWordFromApi(searchTermLowercase, processDataFromWordApi);
     $(event.currentTarget)
       .find('.js-query')
       .val('');
