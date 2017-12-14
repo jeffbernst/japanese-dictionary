@@ -46,7 +46,6 @@ function getWordFromApi(searchTerm, callback) {
 }
 
 function processDataFromWordApi(data) {
-  console.log(data);
   $('.results-count').text(`(${data.data.length})`);
   if (data.data.length === 0) {
     $('.js-results').html(`<div class="row">
@@ -219,10 +218,8 @@ function displayWordData(
 }
 
 function pageScrollListener(wordArray) {
-  console.count('registering listener');
   $(window).on('scroll', function() {
     if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-      console.log(wordArray);
       $('.loading-animation').show();
       $(window).off('scroll');
       processWordData(wordArray);
