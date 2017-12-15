@@ -16,31 +16,31 @@ body {
 
 .smiley {
   font-family: 'Mplus 1p', sans-serif;
-  padding-top: 50px;
+  margin-top: 50px;
   color: #52e7d8;
   -webkit-text-stroke: 1px black;
-  font-size: 7vw;
+  font-size: 30px;
 }
 
 .title {
   font-family: 'Leckerli One', cursive;
   color: #444;
-  font-size: 5.5vw;
+  font-size: 20px;
 }
 
 .search-form {
-  padding: 20px 0 0 0;
+  padding: 15px 0 0 0;
 }
 
 .input-field {
-  width: 50%;
+  width: 130px;
   height: 30px;
   box-sizing: content-box;
   border-radius: 5px;
   border: 1px solid #999;
   color: #444;
   padding: 0 5px;
-  font-size: 4vw;
+  font-size: 12px;
   vertical-align: top;
   -webkit-appearance: none;
   -webkit-border-radius: 5px;
@@ -48,25 +48,27 @@ body {
 
 .search-button,
 .toggle-button {
-  width: 20%;
   height: 32px;
   border-radius: 5px;
   border: 1px solid #999;
-  font-size: 20px;
+  font-size: 14px;
   color: #444;
   vertical-align: top;
   white-space: nowrap;
   padding: 0;
 }
 
+.toggle-button {
+  width: 45px;
+}
+
+.search-button {
+  width: 60px;
+}
+
 .search-button:active,
 .toggle-button:active {
   background-color: #f2f2f2;
-}
-
-.search-button-text,
-.toggle-button-text {
-  display: inline-block;
 }
 
 /* ~~~~~~~~~~~~ RESULTS ~~~~~~~~~~~~ */
@@ -131,15 +133,15 @@ hr {
 }
 
 .japanese-word {
-  font-size: 6vw;
+  font-size: 25px;
 }
 
 .japanese-word-hiragana {
-  font-size: 5vw;
+  font-size: 18px;
 }
 
 .japanese-word-romaji {
-  font-size: 5vw;
+  font-size: 18px;
   overflow-wrap: break-word;
 }
 
@@ -148,21 +150,21 @@ hr {
 }
 
 .definition {
-  font-size: 5vw;
+  font-size: 18px;
   margin-bottom: 10px;
 }
 
 .definition-index {
-  font-size: 5vw;
+  font-size: 15px;
 }
 
 .kanji-info {
-  font-size: 5vw;
+  font-size: 18px;
   line-height: 30px;
 }
 
 .kanji-info-label {
-  font-size: 15px;
+  font-size: 13px;
 }
 
 video {

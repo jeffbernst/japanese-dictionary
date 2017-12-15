@@ -48,12 +48,6 @@
   width: 100%;
 }
 
-@media only screen and (max-width: 370px) {
-  .kanji-info-label {
-    font-size: 3vw;
-  }
-}
-
 @media only screen and (min-width: 1000px) {
   .word-label {
     display: inline;
@@ -92,10 +86,12 @@
   .search-button {
     width: 100px;
     height: 42px;
+    font-size: 20px;
   }
   .toggle-button {
     width: 70px;
     height: 42px;
+    font-size: 20px;
   }
   .title {
     font-size: 35px;

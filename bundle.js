@@ -6,8 +6,6 @@ const FADE_TIME = 600;
 function startApp() {
   watchSubmit();
   watchToggle();
-  textSizeListener();
-  adjustTextSize();
 }
 
 function watchSubmit() {
@@ -26,7 +24,7 @@ function watchSubmit() {
     getWordFromApi(searchTermLowercase, processDataFromWordApi);
     $(event.currentTarget)
       .find('.js-query')
-      .val('');
+      .select();
   });
 }
 
@@ -58,6 +56,8 @@ function processDataFromWordApi(data) {
           Sorry! Your search didn't return any results.
         </div>
       </div>`);
+    $('.loading-animation').hide();
+    $('.results').show();
   } else {
     processWordData(data.data);
   }
@@ -250,28 +250,6 @@ function getKanjiInfoFromApi(searchTerm) {
     };
     $.ajax(query);
   });
-}
-
-function textSizeListener() {
-  $(window).resize(function() {
-    adjustTextSize();
-  });
-}
-
-function adjustTextSize() {
-  //resize toggle button text
-  let toggleButtonTextWidth = $('.toggle-button-text').width();
-  let toggleButtonWidth = $('.toggle-button').width();
-  let toggleButtonScale = toggleButtonTextWidth / toggleButtonWidth;
-  let setToggleButtonScale = toggleButtonScale > 1 ? 1 / toggleButtonScale : 1;
-  $('.toggle-button-text').css('transform', `scale(${setToggleButtonScale})`);
-  //resize search button text
-  let searchButtonTextWidth = $('.search-button-text').width();
-  let searchButtonWidth = $('.search-button').width();
-  let searchButtonScale = searchButtonWidth / searchButtonTextWidth;
-  let setSearchButtonScale =
-    searchButtonScale > 1 ? 1 / searchButtonScale : searchButtonScale;
-  $('.search-button-text').css('transform', `scale(${setSearchButtonScale})`);
 }
 
 $(startApp);
