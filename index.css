@@ -38,7 +38,6 @@ body {
   box-sizing: content-box;
   border-radius: 5px;
   border: 1px solid #999;
-  color: #444;
   padding: 0 5px;
   font-size: 12px;
   vertical-align: top;
@@ -56,6 +55,8 @@ body {
   vertical-align: top;
   white-space: nowrap;
   padding: 0;
+  background-color: Transparent;
+  background-repeat: no-repeat;
 }
 
 .toggle-button {
