@@ -43,34 +43,30 @@ body {
   font-size: 4vw;
   vertical-align: top;
   -webkit-appearance: none;
+  -webkit-border-radius: 5px;
 }
 
-.search-button {
-  width: 20%;
-  height: 32px;
-  border-radius: 5px;
-  border: 1px solid #999;
-  font-size: 4vw;
-  color: #444;
-  vertical-align: top;
-}
-
-.search-button:active {
-  background-color: #f2f2f2;
-}
-
+.search-button,
 .toggle-button {
   width: 20%;
   height: 32px;
   border-radius: 5px;
   border: 1px solid #999;
-  font-size: 4vw;
+  font-size: 20px;
   color: #444;
   vertical-align: top;
+  white-space: nowrap;
+  padding: 0;
 }
 
+.search-button:active,
 .toggle-button:active {
   background-color: #f2f2f2;
+}
+
+.search-button-text,
+.toggle-button-text {
+  display: inline-block;
 }
 
 /* ~~~~~~~~~~~~ RESULTS ~~~~~~~~~~~~ */
