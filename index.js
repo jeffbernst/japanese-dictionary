@@ -16,9 +16,9 @@ function watchSubmit() {
     let searchTerm = $(event.currentTarget)
       .find('.js-query')
       .val();
-    let searchTermLowercase = searchTerm.toLowerCase();
+    let searchTermLowercase = searchTerm.toLowerCase().trim();
     let toggle = $('.js-toggle-button').text();
-    if (toggle === 'E \u2192 J')
+    if (toggle === 'E \u2192 J' && searchTermLowercase.indexOf(' ') < 0)
       searchTermLowercase = `"${searchTermLowercase}"`;
     getWordFromApi(searchTermLowercase, processDataFromWordApi);
     $(event.currentTarget)
