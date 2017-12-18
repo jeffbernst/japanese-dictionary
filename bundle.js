@@ -241,7 +241,7 @@ function getKanjiInfoFromApi(searchTerm) {
       url:
         'https://kanjialive-api.p.mashape.com/api/public/kanji/' + searchTerm,
       dataType: 'json',
-      complete: function(data) {
+      success: function(data) {
         resolve(data);
       },
       error: function(data) {
