@@ -133,4 +133,10 @@
   .kanji-title {
     font-size: 22px;
   }
+  .instructions {
+    text-align: center;
+    margin: -25px auto 0 auto;
+    max-width: 600px;
+    font-size: 20px;
+  }
 }

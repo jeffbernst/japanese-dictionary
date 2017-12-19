@@ -11,6 +11,7 @@ function startApp() {
 function watchSubmit() {
   $('.js-search-form').submit(event => {
     event.preventDefault();
+    $('.instructions').hide();
     $('.loading-animation').show();
     $('.results').hide();
     $('.js-results').html('');
