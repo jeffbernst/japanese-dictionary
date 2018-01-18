@@ -1,4 +1,6 @@
-#Japanese Dictionary
+# Japanese Dictionary
+
+[Live Demo](https://jeffbernst.github.io/japanese-dictionary/)
 
 ![Japanese Dictionary](japanese_dictionary.png)
 
