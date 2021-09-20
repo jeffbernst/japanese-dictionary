@@ -39,7 +39,7 @@ function watchToggle() {
 function getWordFromApi(searchTerm, callback) {
   const query = {
     url:
-      'https://jeff-cors-anywhere-nzumhvclct.now.sh/http://beta.jisho.org/api/v1/search/words',
+      'https://cors-anywhere.herokuapp.com/http://beta.jisho.org/api/v1/search/words',
     success: callback,
     data: {
       keyword: searchTerm
@@ -239,7 +239,7 @@ function getKanjiInfoFromApi(searchTerm) {
         'X-Mashape-Key': 'KCKQ5WNODBmshLeydUQgzK645yIOp1a4IPpjsnOsnNPVb3ini0'
       },
       url:
-        'https://kanjialive-api.p.mashape.com/api/public/kanji/' + searchTerm,
+        'https://kanjialive-api.p.rapidapi.com/api/public/kanji/' + searchTerm,
       dataType: 'json',
       success: function(data) {
         resolve(data);
